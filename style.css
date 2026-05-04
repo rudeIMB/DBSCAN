@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-slate-950: #020617;
+    --bg-slate-900: #0f172a;
+    --text-slate-200: #e2e8f0;
+    --text-slate-400: #94a3b8;
+    --text-slate-500: #64748b;
+    --sky-400: #38bdf8;
+    --sky-500: #0ea5e9;
+    --emerald-400: #34d399;
+    --emerald-500: #10b981;
+    --amber-400: #fbbf24;
+    --amber-500: #f59e0b;
+    --red-400: #f87171;
+    --red-500: #ef4444;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-slate-950);
+    color: var(--text-slate-200);
+  }
+}
+
+@layer components {
+  /* Range Sliders */
+  input[type="range"] {
+      -webkit-appearance: none;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: var(--sky-500);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+  }
+
+  /* Pre block scrollbars */
+  pre {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  }
+
+  /* Glassmorphism card */
+  .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  /* Prism Fix */
+  code[class*="language-"], pre[class*="language-"] {
+      background: #0f172a !important;
+      text-shadow: none !important;
+  }
+
+  /* Quiz Styles */
+  .quiz-option {
+      cursor: pointer;
+      padding: 1rem;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease;
+  }
+
+  .quiz-option:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--sky-500);
+  }
+
+  .quiz-option.correct {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: var(--emerald-500);
+      color: var(--emerald-400);
+  }
+
+  .quiz-option.wrong {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--red-500);
+      color: var(--red-400);
+  }
+}
+
+@layer utilities {
+  /* Animation classes */
+  @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-up {
+      animation: fadeInUp 0.8s ease forwards;
+  }
+}
