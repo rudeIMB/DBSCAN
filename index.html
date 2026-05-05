@@ -3,255 +3,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mastering DBSCAN | Interactive Tutoring</title>
-    <meta name="description" content="Learn DBSCAN clustering through interactive visualizations, step-by-step animations, and advanced implementation guides.">
+    <title>DBSCAN Explained Simply | Ibrahim Explains</title>
+    <meta name="description" content="Learn DBSCAN clustering through interactive visualizations  made simple by Ibrahim Explains.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <!-- KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}, {left: '\\(', right: '\\)', display: false}, {left: '\\[', right: '\\]', display: true}]});"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
 
     <!-- Prism.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+    <style>
+      :root {
+        --yellow: #F4B400;
+        --charcoal: #1E1E1E;
+        --off-white: #F5F5F5;
+        --red-accent: #FF3B30;
+      }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-200 selection:bg-sky-500/30">
-    <nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2 font-outfit text-xl font-bold text-white">
-                <i data-lucide="layers" class="text-sky-400"></i>
-                <span>BrainerX <span class="text-sky-400">DBSCAN</span></span>
-            </div>
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-                <a href="#algorithm" class="hover:text-white transition-colors">Algorithm</a>
-                <a href="#visualizer" class="hover:text-white transition-colors">Visualizer</a>
-                <a href="#tuning" class="hover:text-white transition-colors">Tuning</a>
-                <a href="#results" class="hover:text-white transition-colors">Results</a>
-                <a href="#use-cases" class="hover:text-white transition-colors">Cases</a>
-                <a href="#sklearn" class="hover:text-white transition-colors">Implementation</a>
-                <a href="#exercises" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 rounded-full transition-all">Exercises</a>
-            </div>
+<body style="background:#F5F5F5; color:#1E1E1E; font-family:'Inter',sans-serif;">
+
+  <!-- NAV -->
+  <nav style="position:fixed;top:0;width:100%;z-index:50;background:rgba(245,245,245,0.92);backdrop-filter:blur(12px);border-bottom:2px solid #EBEBEB;">
+    <div style="max-width:1200px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between;">
+      <!-- Logo -->
+      <a href="#" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+        <img src="./logo.png" alt="Ibrahim Explains" style="height:44px;width:44px;border-radius:50%;object-fit:cover;border:2px solid var(--yellow);">
+        <div>
+          <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1rem;color:#1E1E1E;line-height:1.1;">Ibrahim<span style="color:var(--yellow);">Explains</span></div>
+          <div style="font-size:0.65rem;font-weight:600;color:#9A9A9A;letter-spacing:0.05em;">DBSCAN · Interactive</div>
         </div>
-    </nav>
+      </a>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-            <div class="absolute inset-0 z-0 pointer-events-none">
-                <canvas id="hero-bg" class="w-full h-full opacity-20"></canvas>
-            </div>
-            <div class="relative z-10 max-w-4xl mx-auto px-6 text-center">
-                <h1 class="font-outfit text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                    Clustering by <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-500">Density</span>
-                </h1>
-                <p class="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
-                    Master DBSCAN: The powerful algorithm that discovers arbitrary shapes and labels noise with surgical precision.
-                </p>
-                <div class="flex flex-wrap items-center justify-center gap-4">
-                    <a href="#visualizer" class="px-8 py-4 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-xl transition-all flex items-center gap-2">
-                        Start Learning <i data-lucide="arrow-right" size="18"></i>
-                    </a>
-                    <a href="#algorithm" class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all">
-                        How it works
-                    </a>
-                </div>
-            </div>
-        </section>
+      <!-- Links -->
+      <div style="display:flex;align-items:center;gap:28px;">
+        <a href="#algorithm" class="nav-link" style="text-decoration:none;">Algorithm</a>
+        <a href="#visualizer" class="nav-link" style="text-decoration:none;">Visualizer</a>
+        <a href="#tuning" class="nav-link" style="text-decoration:none;">Tuning</a>
+        <a href="#results" class="nav-link" style="text-decoration:none;">Results</a>
+        <a href="#use-cases" class="nav-link" style="text-decoration:none;">Cases</a>
+        <a href="#sklearn" class="nav-link" style="text-decoration:none;">Code</a>
+        <a href="#exercises" class="nav-cta" style="text-decoration:none;">Try Quiz</a>
+      </div>
+    </div>
+  </nav>
 
-        <!-- Algorithm Section -->
-        <section id="algorithm" class="py-24 px-6 max-w-7xl mx-auto">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
+  <main>
+    <!-- HERO -->
+    <section style="position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:68px;">
+      <!-- BG Canvas -->
+      <div style="position:absolute;inset:0;z-index:0;pointer-events:none;">
+        <canvas id="hero-bg" style="width:100%;height:100%;opacity:0.07;"></canvas>
+      </div>
+
+      <!-- Decorative blobs -->
+      <div style="position:absolute;top:15%;right:8%;width:280px;height:280px;background:radial-gradient(circle,rgba(244,180,0,0.18),transparent 70%);border-radius:50%;z-index:0;pointer-events:none;"></div>
+      <div style="position:absolute;bottom:20%;left:5%;width:200px;height:200px;background:radial-gradient(circle,rgba(244,180,0,0.1),transparent 70%);border-radius:50%;z-index:0;pointer-events:none;"></div>
+
+      <div style="position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+        <!-- Left text -->
+        <div>
+          <div class="tag" style="margin-bottom:20px;">Clustering Explained Simply</div>
+          <h1 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(2.4rem,5vw,3.6rem);line-height:1.1;color:#1E1E1E;margin-bottom:20px;">
+            Clustering<br>by
+            <span style="position:relative;display:inline-block;">
+              <span style="color:var(--yellow);">Density</span>
+              <svg style="position:absolute;bottom:-6px;left:0;width:100%;" viewBox="0 0 200 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C50 2 150 2 198 6" stroke="#F4B400" stroke-width="3" stroke-linecap="round"/></svg>
+            </span>
+          </h1>
+          <p style="font-size:1.1rem;color:#6B6B6B;margin-bottom:32px;line-height:1.7;max-width:460px;">
+            Master DBSCAN  the algorithm that finds clusters of <em>any shape</em> and spots outliers automatically. No PhD required.
+          </p>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;">
+            <a href="#visualizer" class="brand-btn-primary" style="padding:14px 28px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:0.95rem;">
+              Start Learning <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+            </a>
+            <a href="#algorithm" class="brand-btn-outline" style="padding:14px 28px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:0.95rem;">
+              How it Works
+            </a>
+          </div>
+
+          <!-- Stats row -->
+          <div style="display:flex;gap:32px;margin-top:40px;padding-top:32px;border-top:2px solid #EBEBEB;">
+            <div>
+              <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;color:#1E1E1E;">2</div>
+              <div style="font-size:0.8rem;color:#9A9A9A;font-weight:600;">Parameters</div>
+            </div>
+            <div>
+              <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;color:#1E1E1E;">∞</div>
+              <div style="font-size:0.8rem;color:#9A9A9A;font-weight:600;">Cluster Shapes</div>
+            </div>
+            <div>
+              <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;color:var(--yellow);">Auto</div>
+              <div style="font-size:0.8rem;color:#9A9A9A;font-weight:600;">Noise Detection</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Mascot + floating cards -->
+        <div style="position:relative;display:flex;justify-content:center;align-items:center;">
+          <div class="animate-float" style="position:relative;">
+            <img src="./logo.png" alt="Ibrahim Explains" style="width:300px;height:300px;object-fit:contain;filter:drop-shadow(0 20px 40px rgba(244,180,0,0.25));">
+          </div>
+          <!-- Floating badge 1 -->
+          <div style="position:absolute;top:10%;left:-20px;background:white;border-radius:16px;padding:12px 16px;border:2px solid #EBEBEB;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.4rem;">🎯</span>
+            <div>
+              <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;color:#1E1E1E;">Core Point</div>
+              <div style="font-size:0.7rem;color:#9A9A9A;">MinPts neighbors</div>
+            </div>
+          </div>
+          <!-- Floating badge 2 -->
+          <div style="position:absolute;bottom:15%;right:-30px;background:white;border-radius:16px;padding:12px 16px;border:2px solid #EBEBEB;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.4rem;">🚫</span>
+            <div>
+              <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;color:#1E1E1E;">Noise Point</div>
+              <div style="font-size:0.7rem;color:#9A9A9A;">Pure outlier</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALGORITHM -->
+    <section id="algorithm" style="padding:96px 24px;max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:56px;">
+        <div class="section-label" style="margin-bottom:12px;">The Core Idea</div>
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;margin-bottom:16px;">What is DBSCAN?</h2>
+        <p style="font-size:1rem;color:#6B6B6B;max-width:520px;margin:0 auto;line-height:1.7;">
+          Think of it like finding groups of friends at a party  if enough people are nearby, they form a group. Loners are noise.
+        </p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
+        <!-- Point types -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <!-- Core -->
+          <div class="brand-card" style="padding:24px;display:flex;gap:18px;align-items:flex-start;">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">🟢</div>
+            <div>
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:6px;">Core Points</h4>
+              <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.6;">At least <code style="background:#F0F0F0;padding:2px 6px;border-radius:6px;font-size:0.8rem;">MinPts</code> neighbors within <code style="background:#F0F0F0;padding:2px 6px;border-radius:6px;font-size:0.8rem;">Epsilon</code> radius. These are the heart of every cluster.</p>
+            </div>
+          </div>
+          <!-- Border -->
+          <div class="brand-card" style="padding:24px;display:flex;gap:18px;align-items:flex-start;">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">🟡</div>
+            <div>
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:6px;">Border Points</h4>
+              <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.6;">Within <code style="background:#F0F0F0;padding:2px 6px;border-radius:6px;font-size:0.8rem;">Epsilon</code> of a core point, but too few neighbors themselves to be core.</p>
+            </div>
+          </div>
+          <!-- Noise -->
+          <div class="brand-card" style="padding:24px;display:flex;gap:18px;align-items:flex-start;">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,59,48,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">🔴</div>
+            <div>
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:6px;">Noise Points</h4>
+              <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.6;">Neither core nor border. These are the outliers  DBSCAN finds them automatically!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Steps -->
+        <div style="background:var(--charcoal);border-radius:24px;padding:36px;color:white;">
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.2rem;color:white;margin-bottom:28px;display:flex;align-items:center;gap:10px;">
+            <span style="width:32px;height:32px;background:var(--yellow);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;">▶</span>
+            How it Runs
+          </h3>
+          <div style="display:flex;flex-direction:column;gap:20px;">
+            <div style="display:flex;gap:16px;align-items:flex-start;">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--yellow);color:#1E1E1E;font-weight:800;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Poppins',sans-serif;">1</div>
+              <p style="color:#C8C8C8;font-size:0.9rem;line-height:1.6;margin-top:6px;">Pick an unvisited point. Find all neighbors within distance \(\epsilon\).</p>
+            </div>
+            <div style="display:flex;gap:16px;align-items:flex-start;">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--yellow);color:#1E1E1E;font-weight:800;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Poppins',sans-serif;">2</div>
+              <p style="color:#C8C8C8;font-size:0.9rem;line-height:1.6;margin-top:6px;">If count \(\ge\) MinPts → start a cluster. Otherwise → mark as noise.</p>
+            </div>
+            <div style="display:flex;gap:16px;align-items:flex-start;">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--yellow);color:#1E1E1E;font-weight:800;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Poppins',sans-serif;">3</div>
+              <p style="color:#C8C8C8;font-size:0.9rem;line-height:1.6;margin-top:6px;">Expand the cluster: recursively find all neighbors of core points.</p>
+            </div>
+            <div style="display:flex;gap:16px;align-items:flex-start;">
+              <div style="width:32px;height:32px;border-radius:50%;background:var(--yellow);color:#1E1E1E;font-weight:800;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Poppins',sans-serif;">4</div>
+              <p style="color:#C8C8C8;font-size:0.9rem;line-height:1.6;margin-top:6px;">Repeat until every single point has been visited.</p>
+            </div>
+          </div>
+          <div style="margin-top:28px;padding:16px;background:rgba(244,180,0,0.1);border:1px solid rgba(244,180,0,0.3);border-radius:14px;">
+            <p style="font-size:0.8rem;color:var(--yellow);font-weight:600;margin:0;">💡 Ibrahim's tip: Think of epsilon as a "friendship radius"  how far you need to be to count as someone's neighbor.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISUALIZER -->
+    <section id="visualizer" style="padding:96px 0;background:white;border-top:2px solid #EBEBEB;border-bottom:2px solid #EBEBEB;">
+      <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+        <div style="text-align:center;margin-bottom:48px;">
+          <div class="section-label" style="margin-bottom:12px;">Hands-On Learning</div>
+          <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;margin-bottom:12px;">Interactive Visualizer</h2>
+          <p style="color:#6B6B6B;max-width:480px;margin:0 auto;">Tweak parameters and watch DBSCAN come to life. Click the canvas to add your own points!</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:280px 1fr;gap:28px;">
+          <!-- Controls -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="brand-card" style="padding:24px;">
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;color:#1E1E1E;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+                <i data-lucide="sliders" style="width:16px;height:16px;color:var(--yellow);"></i> Parameters
+              </h4>
+              <div style="display:flex;flex-direction:column;gap:20px;">
                 <div>
-                    <h2 class="font-outfit text-3xl md:text-4xl font-bold text-white mb-6">The Core Concept</h2>
-                    <p class="text-slate-400 mb-6 leading-relaxed">
-                        Unlike K-Means which partitions data into Voronoi cells, <strong>DBSCAN</strong> (Density-Based Spatial Clustering of Applications with Noise) groups points that are closely packed together.
-                    </p>
-                    <div class="space-y-6">
-                        <div class="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
-                            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                                <i data-lucide="circle-dot"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white mb-1">Core Points</h4>
-                                <p class="text-sm text-slate-400">At least <code>MinPts</code> neighbors within <code>Epsilon</code> radius.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
-                            <div class="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-                                <i data-lucide="dot-circle"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white mb-1">Border Points</h4>
-                                <p class="text-sm text-slate-400">Within <code>Epsilon</code> of a core point, but fewer than <code>MinPts</code> neighbors.</p>
-                            </div>
-                        </div>
-                        <div class="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/10">
-                            <div class="w-10 h-10 rounded-lg bg-slate-500/20 flex items-center justify-center text-slate-400 shrink-0">
-                                <i data-lucide="x-circle"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-white mb-1">Noise Points</h4>
-                                <p class="text-sm text-slate-400">Neither core nor border. Pure outliers.</p>
-                            </div>
-                        </div>
-                    </div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <label style="font-size:0.85rem;font-weight:600;color:#1E1E1E;">Epsilon (ε)</label>
+                    <span id="eps-val" style="font-family:monospace;font-weight:700;color:var(--yellow);background:rgba(244,180,0,0.1);padding:2px 8px;border-radius:6px;font-size:0.85rem;">30</span>
+                  </div>
+                  <input type="range" id="eps-slider" min="10" max="100" value="30" style="width:100%;">
                 </div>
-                <div class="rounded-3xl overflow-hidden border border-white/10 bg-slate-900 p-8 shadow-2xl">
-                    <div id="algorithm-steps" class="space-y-8">
-                        <!-- Content will be injected or hardcoded here -->
-                         <h3 class="font-bold text-white text-xl flex items-center gap-2">
-                             <i data-lucide="play" class="text-sky-400"></i> Execution Steps
-                         </h3>
-                         <ul class="space-y-4 text-slate-400">
-                             <li class="flex gap-3"><span class="text-sky-400 font-bold">01.</span> Pick an unvisited point and find its neighbors within distance \(\epsilon\).</li>
-                             <li class="flex gap-3"><span class="text-sky-400 font-bold">02.</span> If count \(\ge\) MinPts, start a cluster. Otherwise, mark as noise.</li>
-                             <li class="flex gap-3"><span class="text-sky-400 font-bold">03.</span> For all points in the cluster, recursively find their neighbors to expand.</li>
-                             <li class="flex gap-3"><span class="text-sky-400 font-bold">04.</span> Repeat until all points are visited.</li>
-                         </ul>
-                    </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <label style="font-size:0.85rem;font-weight:600;color:#1E1E1E;">MinPts</label>
+                    <span id="minpts-val" style="font-family:monospace;font-weight:700;color:var(--yellow);background:rgba(244,180,0,0.1);padding:2px 8px;border-radius:6px;font-size:0.85rem;">4</span>
+                  </div>
+                  <input type="range" id="minpts-slider" min="2" max="20" value="4" style="width:100%;">
                 </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                    <label style="font-size:0.85rem;font-weight:600;color:#1E1E1E;">Speed</label>
+                    <span id="speed-val" style="font-family:monospace;font-weight:700;color:var(--yellow);background:rgba(244,180,0,0.1);padding:2px 8px;border-radius:6px;font-size:0.85rem;">1x</span>
+                  </div>
+                  <input type="range" id="speed-slider" min="0.1" max="5" step="0.1" value="1" style="width:100%;">
+                </div>
+              </div>
             </div>
-        </section>
 
-        <!-- Visualizer Section -->
-        <section id="visualizer" class="py-24 bg-white/[0.02] border-y border-white/5">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="mb-12 text-center">
-                    <h2 class="font-outfit text-3xl md:text-4xl font-bold text-white mb-4">Interactive Visualizer</h2>
-                    <p class="text-slate-400">Experiment with parameters and watch the algorithm come to life.</p>
-                </div>
-
-                <div class="grid lg:grid-cols-4 gap-8">
-                    <!-- Controls -->
-                    <div class="lg:col-span-1 space-y-8">
-                        <div class="p-6 rounded-2xl bg-slate-900 border border-white/10">
-                            <h4 class="font-bold text-white mb-6 flex items-center gap-2">
-                                <i data-lucide="sliders" size="18"></i> Parameters
-                            </h4>
-                            <div class="space-y-6">
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <label class="text-sm text-slate-300">Epsilon ($\epsilon$)</label>
-                                        <span id="eps-val" class="text-sky-400 font-mono">30</span>
-                                    </div>
-                                    <input type="range" id="eps-slider" min="10" max="100" value="30" class="w-full accent-sky-500">
-                                </div>
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <label class="text-sm text-slate-300">MinPts</label>
-                                        <span id="minpts-val" class="text-sky-400 font-mono">4</span>
-                                    </div>
-                                    <input type="range" id="minpts-slider" min="2" max="20" value="4" class="w-full accent-sky-500">
-                                </div>
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <label class="text-sm text-slate-300">Animation Speed</label>
-                                        <span id="speed-val" class="text-sky-400 font-mono">1x</span>
-                                    </div>
-                                    <input type="range" id="speed-slider" min="0.1" max="5" step="0.1" value="1" class="w-full accent-sky-500">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-6 rounded-2xl bg-slate-900 border border-white/10">
-                            <h4 class="font-bold text-white mb-4">Actions</h4>
-                            <div class="grid grid-cols-1 gap-3">
-                                <button id="btn-run" class="w-full py-3 bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold rounded-lg transition-all flex items-center justify-center gap-2">
-                                    <i data-lucide="play"></i> Run
-                                </button>
-                                <button id="btn-step" class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-all flex items-center justify-center gap-2">
-                                    <i data-lucide="step-forward"></i> Next Step
-                                </button>
-                                <button id="btn-reset" class="w-full py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg transition-all">
-                                    Reset
-                                </button>
-                            </div>
-                            <p class="text-[10px] text-slate-500 mt-4 text-center">
-                                Tip: Click the canvas to manually add points!
-                            </p>
-                        </div>
-
-                        <div class="p-6 rounded-2xl bg-slate-900 border border-white/10">
-                            <h4 class="font-bold text-white mb-4">Datasets</h4>
-                            <select id="dataset-select" class="w-full bg-slate-800 border border-white/10 rounded-lg p-3 text-slate-300 outline-none focus:border-sky-500">
-                                <option value="circles">Concentric Circles</option>
-                                <option value="moons">Moons</option>
-                                <option value="blobs">Density Blobs</option>
-                                <option value="random">Random Noise</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Canvas -->
-                    <div class="lg:col-span-3">
-                        <div class="relative w-full aspect-video bg-slate-950 rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-                            <canvas id="viz-canvas" class="w-full h-full"></canvas>
-                            <div id="viz-info" class="absolute bottom-6 left-6 p-4 rounded-xl bg-slate-900/80 backdrop-blur border border-white/10 text-xs font-mono space-y-1">
-                                <div>Status: <span id="status-text" class="text-sky-400">Ready</span></div>
-                                <div>Clusters: <span id="cluster-count" class="text-sky-400">0</span></div>
-                                <div>Noise: <span id="noise-count" class="text-sky-400">0</span></div>
-                            </div>
-                            <!-- Legend -->
-                            <div class="absolute top-6 right-6 p-4 rounded-xl bg-slate-900/80 backdrop-blur border border-white/10 text-xs space-y-2">
-                                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Core</div>
-                                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500"></span> Border</div>
-                                <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-red-500"></span> Noise</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="brand-card" style="padding:24px;">
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;color:#1E1E1E;margin-bottom:16px;">Controls</h4>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <button id="btn-run" class="brand-btn-primary" style="padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.9rem;cursor:pointer;">
+                  <i data-lucide="play" style="width:16px;height:16px;"></i> Run DBSCAN
+                </button>
+                <button id="btn-step" class="brand-btn-outline" style="padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.9rem;cursor:pointer;">
+                  <i data-lucide="step-forward" style="width:16px;height:16px;"></i> Next Step
+                </button>
+                <button id="btn-reset" style="padding:12px;border-radius:50px;border:2px solid rgba(255,59,48,0.3);background:rgba(255,59,48,0.05);color:#FF3B30;font-weight:700;font-family:'Poppins',sans-serif;font-size:0.9rem;cursor:pointer;transition:all 0.2s;">Reset</button>
+              </div>
+              <p style="font-size:0.72rem;color:#9A9A9A;margin-top:14px;text-align:center;line-height:1.5;">💡 Click on the canvas to add your own data points!</p>
             </div>
-        </section>
 
-        <!-- Tuning Section -->
-        <section id="tuning" class="py-24 px-6 max-w-7xl mx-auto">
-            <h2 class="font-outfit text-3xl md:text-4xl font-bold text-white mb-12 text-center">Tuning Hyperparameters</h2>
-            <div class="grid md:grid-cols-2 gap-16 items-start">
-                <div class="space-y-8">
-                    <div class="p-8 rounded-3xl bg-white/5 border border-white/10">
-                        <h3 class="text-xl font-bold text-white mb-4">The Elbow Method</h3>
-                        <p class="text-slate-400 mb-4">
-                            Picking $\epsilon$ manually is hard. Instead, we use the <strong>K-Distance Plot</strong>.
-                        </p>
-                        <ol class="space-y-4 text-sm text-slate-400 list-decimal pl-4">
-                            <li>Choose $k = \text{MinPts} - 1$.</li>
-                            <li>Calculate the distance to the $k$-th nearest neighbor for each point.</li>
-                            <li>Sort distances and plot them.</li>
-                            <li>The <strong>"Elbow"</strong> of the curve is your optimal $\epsilon$.</li>
-                        </ol>
-                    </div>
-                    <div class="p-8 rounded-3xl bg-sky-500/10 border border-sky-500/20">
-                        <h3 class="text-xl font-bold text-white mb-4">MinPts Rule of Thumb</h3>
-                        <p class="text-slate-400">
-                            A general rule is to set <code>MinPts &ge; D + 1</code>, where $D$ is the number of dimensions. For noisy data, larger values are better.
-                        </p>
-                    </div>
-                </div>
-                <div class="bg-slate-900 rounded-3xl p-8 border border-white/10 aspect-square flex flex-col items-center justify-center">
-                    <h4 class="text-white font-bold mb-6">Interactive K-Distance Plot</h4>
-                    <div id="k-distance-container" class="w-full h-full">
-                        <canvas id="k-distance-chart"></canvas>
-                    </div>
-                </div>
+            <div class="brand-card" style="padding:24px;">
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;color:#1E1E1E;margin-bottom:12px;">Dataset</h4>
+              <select id="dataset-select" style="width:100%;padding:10px 14px;border-radius:12px;border:2px solid #EBEBEB;font-family:'Inter',sans-serif;font-size:0.875rem;color:#1E1E1E;background:white;outline:none;cursor:pointer;">
+                <option value="circles">🔵 Concentric Circles</option>
+                <option value="moons">🌙 Moons</option>
+                <option value="blobs">🫧 Density Blobs</option>
+                <option value="random">🎲 Random Noise</option>
+              </select>
             </div>
-        </section>
+          </div>
 
-        <!-- Sklearn Section -->
-        <section id="sklearn" class="py-24 bg-white/[0.02]">
-            <div class="max-w-4xl mx-auto px-6">
-                <h2 class="font-outfit text-3xl md:text-4xl font-bold text-white mb-12 text-center">Implementation Guide</h2>
-                
-                <div class="space-y-12">
-                    <div>
-                        <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                            <i data-lucide="code" class="text-sky-400"></i> Basic Setup
-                        </h3>
-                        <pre class="rounded-2xl border border-white/10 overflow-x-auto"><code class="language-python">from sklearn.cluster import DBSCAN
+          <!-- Canvas -->
+          <div>
+            <div style="position:relative;width:100%;aspect-ratio:16/9;background:#FAFAFA;border-radius:24px;border:2px solid #EBEBEB;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+              <canvas id="viz-canvas" style="width:100%;height:100%;"></canvas>
+
+              <!-- Status overlay -->
+              <div id="viz-info" style="position:absolute;bottom:20px;left:20px;padding:14px 18px;border-radius:14px;background:rgba(255,255,255,0.95);border:2px solid #EBEBEB;font-size:0.78rem;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                  <div style="font-weight:600;color:#9A9A9A;">Status: <span id="status-text" style="color:var(--yellow);font-weight:700;">Ready</span></div>
+                  <div style="font-weight:600;color:#9A9A9A;">Clusters: <span id="cluster-count" style="color:#1E1E1E;font-weight:700;">0</span></div>
+                  <div style="font-weight:600;color:#9A9A9A;">Noise: <span id="noise-count" style="color:var(--red-accent);font-weight:700;">0</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TUNING -->
+    <section id="tuning" style="padding:96px 24px;max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:56px;">
+        <div class="section-label" style="margin-bottom:12px;">Finding the Sweet Spot</div>
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;">Tuning Hyperparameters</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div class="brand-card" style="padding:32px;">
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:16px;">📈 The Elbow Method</h3>
+            <p style="color:#6B6B6B;margin-bottom:16px;line-height:1.7;font-size:0.9rem;">
+              Choosing ε by hand is hard. Use the <strong>K-Distance Plot</strong> instead:
+            </p>
+            <ol style="display:flex;flex-direction:column;gap:10px;padding-left:0;list-style:none;">
+              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">1.</span>Set $k = \text{MinPts} - 1$</li>
+              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">2.</span>Calculate each point's distance to its $k$-th nearest neighbor</li>
+              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">3.</span>Sort distances and plot them</li>
+              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">4.</span>The <strong>"Elbow"</strong> of the curve = your optimal ε</li>
+            </ol>
+          </div>
+          <div style="background:rgba(244,180,0,0.08);border:2px solid rgba(244,180,0,0.25);border-radius:20px;padding:28px;">
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:12px;">👍 MinPts Rule of Thumb</h3>
+            <p style="color:#6B6B6B;line-height:1.7;font-size:0.9rem;">
+              Set <code style="background:rgba(244,180,0,0.15);padding:2px 8px;border-radius:6px;font-size:0.85rem;">MinPts ≥ D + 1</code> where $D$ = number of dimensions. For noisier data, go higher.
+            </p>
+          </div>
+        </div>
+        <div class="brand-card" style="padding:32px;">
+          <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:20px;text-align:center;">Live K-Distance Plot</h4>
+          <div id="k-distance-container" style="width:100%;height:280px;">
+            <canvas id="k-distance-chart" style="width:100%;height:100%;"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODE / SKLEARN -->
+    <section id="sklearn" style="padding:96px 0;background:var(--charcoal);border-top:2px solid #EBEBEB;">
+      <div style="max-width:860px;margin:0 auto;padding:0 24px;">
+        <div style="text-align:center;margin-bottom:48px;">
+          <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;background:rgba(244,180,0,0.15);border:1px solid rgba(244,180,0,0.3);border-radius:50px;font-size:0.75rem;font-weight:700;color:var(--yellow);font-family:'Nunito',sans-serif;margin-bottom:14px;letter-spacing:0.08em;">⌨️ CODE TIME</div>
+          <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.4rem);color:white;margin-bottom:12px;">Implementation Guide</h2>
+          <p style="color:#9A9A9A;max-width:480px;margin:0 auto;">Two lines of sklearn. That's it. Let's go.</p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:28px;">
+          <div>
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:white;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+              <i data-lucide="code" style="width:18px;height:18px;color:var(--yellow);"></i> Basic Setup
+            </h3>
+            <pre style="border-radius:18px;border:2px solid rgba(255,255,255,0.08);overflow-x:auto;"><code class="language-python">from sklearn.cluster import DBSCAN
 import numpy as np
 
 # Initialize with parameters
@@ -260,107 +348,113 @@ db = DBSCAN(eps=0.3, min_samples=5)
 # Fit and predict
 clusters = db.fit_predict(X)
 
-# -1 represents noise points
+# -1 means noise  DBSCAN finds them for you
 n_clusters = len(set(clusters)) - (1 if -1 in clusters else 0)
 n_noise = list(clusters).count(-1)</code></pre>
-                    </div>
-
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div class="p-6 rounded-2xl bg-white/5 border border-white/10">
-                            <h4 class="font-bold text-white mb-3">Distance Metrics</h4>
-                            <p class="text-sm text-slate-400 mb-4">For non-Euclidean data, use the <code>metric</code> parameter.</p>
-                            <code class="text-xs text-sky-400 bg-sky-400/10 p-2 rounded">metric='manhattan'</code>
-                        </div>
-                        <div class="p-6 rounded-2xl bg-white/5 border border-white/10">
-                            <h4 class="font-bold text-white mb-3">Scalability</h4>
-                            <p class="text-sm text-slate-400 mb-4">Use <code>algorithm='ball_tree'</code> for high-dimensional data.</p>
-                            <code class="text-xs text-sky-400 bg-sky-400/10 p-2 rounded">algorithm='auto'</code>
-                        </div>
-                    </div>
-                </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div style="background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;">
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:white;margin-bottom:10px;font-size:0.9rem;">Distance Metrics</h4>
+              <p style="font-size:0.825rem;color:#9A9A9A;margin-bottom:12px;line-height:1.6;">For non-Euclidean data, swap the <code style="color:var(--yellow);">metric</code> param.</p>
+              <code style="font-size:0.78rem;color:var(--yellow);background:rgba(244,180,0,0.1);padding:6px 12px;border-radius:8px;display:inline-block;">metric='manhattan'</code>
             </div>
-        </section>
-
-        <!-- Results Section -->
-        <section id="results" class="py-24 px-6 max-w-7xl mx-auto">
-            <h2 class="font-outfit text-3xl md:text-4xl font-bold text-white mb-12 text-center">Interpreting Results</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="p-8 rounded-3xl bg-slate-900 border border-white/10">
-                    <div class="w-12 h-12 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-400 mb-6">
-                        <i data-lucide="bar-chart-3"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">Cluster Count</h3>
-                    <p class="text-sm text-slate-400">
-                        Unlike K-Means, DBSCAN tells <em>you</em> how many clusters exist. If it finds too many, your ε might be too small.
-                    </p>
-                </div>
-                <div class="p-8 rounded-3xl bg-slate-900 border border-white/10">
-                    <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 mb-6">
-                        <i data-lucide="alert-triangle"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">Noise Ratio</h3>
-                    <p class="text-sm text-slate-400">
-                        High noise (labels of -1) suggests either poor parameter tuning or that your data lacks clear density structures.
-                    </p>
-                </div>
-                <div class="p-8 rounded-3xl bg-slate-900 border border-white/10">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-6">
-                        <i data-lucide="check-circle"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">Silhouette Score</h3>
-                    <p class="text-sm text-slate-400">
-                        Use Silhouette Analysis to validate the consistency within clusters. High scores indicate well-separated clusters.
-                    </p>
-                </div>
+            <div style="background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;">
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:white;margin-bottom:10px;font-size:0.9rem;">Scalability</h4>
+              <p style="font-size:0.825rem;color:#9A9A9A;margin-bottom:12px;line-height:1.6;">Use <code style="color:var(--yellow);">ball_tree</code> for high-dimensional datasets.</p>
+              <code style="font-size:0.78rem;color:var(--yellow);background:rgba(244,180,0,0.1);padding:6px 12px;border-radius:8px;display:inline-block;">algorithm='auto'</code>
             </div>
-        </section>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <!-- Use Cases Section -->
-        <section id="use-cases" class="py-24 bg-white/[0.02]">
-            <div class="max-w-7xl mx-auto px-6">
-                <h2 class="font-outfit text-3xl md:text-4xl font-bold text-white mb-12 text-center">Real-World Use Cases</h2>
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-sky-500/50 transition-all">
-                        <h4 class="font-bold text-white mb-2 flex items-center gap-2">
-                            <i data-lucide="map-pin" size="18" class="text-sky-400"></i> Geospatial
-                        </h4>
-                        <p class="text-xs text-slate-400">Grouping GPS pings to identify common transit hubs or traffic congestion zones.</p>
-                    </div>
-                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-sky-500/50 transition-all">
-                        <h4 class="font-bold text-white mb-2 flex items-center gap-2">
-                            <i data-lucide="shield-check" size="18" class="text-emerald-400"></i> Fraud Detection
-                        </h4>
-                        <p class="text-xs text-slate-400">Identifying anomalous transactions that fall into high-density "noise" regions.</p>
-                    </div>
-                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-sky-500/50 transition-all">
-                        <h4 class="font-bold text-white mb-2 flex items-center gap-2">
-                            <i data-lucide="users" size="18" class="text-amber-400"></i> Market Segments
-                        </h4>
-                        <p class="text-xs text-slate-400">Clustering customers based on purchasing frequency and volume without pre-defining 'K'.</p>
-                    </div>
-                    <div class="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-sky-500/50 transition-all">
-                        <h4 class="font-bold text-white mb-2 flex items-center gap-2">
-                            <i data-lucide="image" size="18" class="text-indigo-400"></i> Computer Vision
-                        </h4>
-                        <p class="text-xs text-slate-400">Segmenting images by grouping pixels with similar intensity or color density.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- RESULTS -->
+    <section id="results" style="padding:96px 24px;max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:56px;">
+        <div class="section-label" style="margin-bottom:12px;">Reading the Output</div>
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;">Interpreting Results</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+        <div class="brand-card" style="padding:32px;">
+          <div style="width:52px;height:52px;border-radius:16px;background:rgba(244,180,0,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:1.4rem;">📊</div>
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:12px;">Cluster Count</h3>
+          <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.7;">Unlike K-Means, DBSCAN tells <em>you</em> how many clusters exist. Too many? Your ε is probably too small.</p>
+        </div>
+        <div class="brand-card" style="padding:32px;">
+          <div style="width:52px;height:52px;border-radius:16px;background:rgba(255,59,48,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:1.4rem;">⚠️</div>
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:12px;">Noise Ratio</h3>
+          <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.7;">High noise (label = -1) means poor tuning or data that simply lacks clear density structure.</p>
+        </div>
+        <div class="brand-card" style="padding:32px;">
+          <div style="width:52px;height:52px;border-radius:16px;background:rgba(16,185,129,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:1.4rem;">✅</div>
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:12px;">Silhouette Score</h3>
+          <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.7;">Validate cluster quality with silhouette analysis. Higher = clusters are well-separated and tight.</p>
+        </div>
+      </div>
+    </section>
 
-        <!-- Exercises Section -->
-        <section id="exercises" class="py-24 px-6 max-w-7xl mx-auto">
-            <h2 class="font-outfit text-3xl md:text-4xl font-bold text-white mb-12 text-center">Test Your Knowledge</h2>
-            <div id="quiz-container" class="max-w-2xl mx-auto space-y-8">
-                <!-- Quiz will be injected here -->
-            </div>
-        </section>
-    </main>
+    <!-- USE CASES -->
+    <section id="use-cases" style="padding:96px 0;background:white;border-top:2px solid #EBEBEB;border-bottom:2px solid #EBEBEB;">
+      <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+        <div style="text-align:center;margin-bottom:56px;">
+          <div class="section-label" style="margin-bottom:12px;">Real World</div>
+          <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;">Where DBSCAN Shines</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+          <div class="brand-card" style="padding:24px;">
+            <div style="font-size:2rem;margin-bottom:14px;">📍</div>
+            <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:8px;font-size:0.95rem;">Geospatial</h4>
+            <p style="font-size:0.8rem;color:#6B6B6B;line-height:1.6;">Group GPS pings to find transit hubs or traffic congestion zones.</p>
+          </div>
+          <div class="brand-card" style="padding:24px;">
+            <div style="font-size:2rem;margin-bottom:14px;">🛡️</div>
+            <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:8px;font-size:0.95rem;">Fraud Detection</h4>
+            <p style="font-size:0.8rem;color:#6B6B6B;line-height:1.6;">Anomalous transactions fall into noise regions  DBSCAN catches them.</p>
+          </div>
+          <div class="brand-card" style="padding:24px;">
+            <div style="font-size:2rem;margin-bottom:14px;">🛒</div>
+            <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:8px;font-size:0.95rem;">Market Segments</h4>
+            <p style="font-size:0.8rem;color:#6B6B6B;line-height:1.6;">Cluster customers by behavior without pre-defining how many groups.</p>
+          </div>
+          <div class="brand-card" style="padding:24px;">
+            <div style="font-size:2rem;margin-bottom:14px;">🖼️</div>
+            <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:8px;font-size:0.95rem;">Computer Vision</h4>
+            <p style="font-size:0.8rem;color:#6B6B6B;line-height:1.6;">Segment images by grouping pixels with similar color or intensity.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <footer class="py-12 border-t border-white/5 text-center text-slate-500 text-sm">
-        <p>&copy; 2026 BrainerX Educational Labs. Built for deep thinkers.</p>
-    </footer>
+    <!-- QUIZ -->
+    <section id="exercises" style="padding:96px 24px;max-width:800px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:48px;">
+        <div class="section-label" style="margin-bottom:12px;">Knowledge Check</div>
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;margin-bottom:12px;">Test Yourself 🧠</h2>
+        <p style="color:#6B6B6B;">Quick questions  let's see how much you've learned!</p>
+      </div>
+      <div id="quiz-container" style="display:flex;flex-direction:column;gap:24px;"></div>
+    </section>
+  </main>
 
-    <script type="module" src="/main.js"></script>
+  <!-- FOOTER -->
+  <footer style="padding:40px 24px;background:var(--charcoal);border-top:2px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <img src="./logo.png" alt="Ibrahim Explains" style="height:40px;width:40px;border-radius:50%;object-fit:cover;border:2px solid var(--yellow);">
+        <div>
+          <div style="font-family:'Poppins',sans-serif;font-weight:800;color:white;font-size:0.9rem;">Ibrahim<span style="color:var(--yellow);">Explains</span></div>
+          <div style="font-size:0.72rem;color:#6B6B6B;">Making complex tech simple.</div>
+        </div>
+      </div>
+      <p style="color:#6B6B6B;font-size:0.85rem;">© 2026 Ibrahim Explains · Built for curious minds</p>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <a href="https://youtube.com" style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(255,59,48,0.15);border:1px solid rgba(255,59,48,0.3);border-radius:50px;text-decoration:none;color:#FF3B30;font-weight:700;font-size:0.8rem;font-family:'Poppins',sans-serif;">
+          ▶ YouTube
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/main.js"></script>
 </body>
 </html>

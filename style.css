@@ -1,106 +1,167 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
 @layer base {
   :root {
-    --bg-slate-950: #020617;
-    --bg-slate-900: #0f172a;
-    --text-slate-200: #e2e8f0;
-    --text-slate-400: #94a3b8;
-    --text-slate-500: #64748b;
-    --sky-400: #38bdf8;
-    --sky-500: #0ea5e9;
-    --emerald-400: #34d399;
-    --emerald-500: #10b981;
-    --amber-400: #fbbf24;
-    --amber-500: #f59e0b;
-    --red-400: #f87171;
-    --red-500: #ef4444;
+    --yellow: #F4B400;
+    --yellow-light: #FFD54F;
+    --yellow-dark: #C68A00;
+    --charcoal: #1E1E1E;
+    --charcoal-soft: #2A2A2A;
+    --charcoal-muted: #3A3A3A;
+    --off-white: #F5F5F5;
+    --off-white-dim: #EBEBEB;
+    --red-accent: #FF3B30;
+    --text-main: #1E1E1E;
+    --text-muted: #6B6B6B;
+    --text-light: #9A9A9A;
   }
 
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
-    background-color: var(--bg-slate-950);
-    color: var(--text-slate-200);
+    background-color: var(--off-white);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
   }
+
+  h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; }
 }
 
 @layer components {
-  /* Range Sliders */
+  .brand-card {
+    background: #fff;
+    border-radius: 20px;
+    border: 2px solid #EBEBEB;
+    transition: all 0.25s ease;
+  }
+  .brand-card:hover {
+    border-color: var(--yellow);
+    box-shadow: 0 8px 32px rgba(244, 180, 0, 0.15);
+    transform: translateY(-2px);
+  }
+  .brand-btn-primary {
+    background: var(--yellow);
+    color: var(--charcoal);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    border-radius: 50px;
+    transition: all 0.2s ease;
+    border: 2px solid var(--yellow);
+  }
+  .brand-btn-primary:hover {
+    background: #E6A800;
+    box-shadow: 0 4px 20px rgba(244, 180, 0, 0.4);
+    transform: translateY(-1px);
+  }
+  .brand-btn-outline {
+    background: transparent;
+    color: var(--charcoal);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    border-radius: 50px;
+    border: 2px solid #D0D0D0;
+    transition: all 0.2s ease;
+  }
+  .brand-btn-outline:hover {
+    border-color: var(--yellow);
+    color: var(--yellow-dark);
+    background: rgba(244, 180, 0, 0.06);
+  }
+  .section-label {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--yellow-dark);
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    background: rgba(244, 180, 0, 0.12);
+    border: 1px solid rgba(244, 180, 0, 0.3);
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--yellow-dark);
+    font-family: 'Nunito', sans-serif;
+  }
   input[type="range"] {
-      -webkit-appearance: none;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      outline: none;
+    -webkit-appearance: none;
+    height: 6px;
+    background: #E0E0E0;
+    border-radius: 3px;
+    outline: none;
   }
-
   input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
-      background: var(--sky-500);
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--yellow);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(244, 180, 0, 0.4);
   }
-
-  /* Pre block scrollbars */
-  pre {
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-  }
-
-  /* Glassmorphism card */
-  .glass {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  /* Prism Fix */
-  code[class*="language-"], pre[class*="language-"] {
-      background: #0f172a !important;
-      text-shadow: none !important;
-  }
-
-  /* Quiz Styles */
+  pre { scrollbar-width: thin; scrollbar-color: #D0D0D0 transparent; }
   .quiz-option {
-      cursor: pointer;
-      padding: 1rem;
-      border-radius: 0.75rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.2s ease;
+    cursor: pointer;
+    padding: 1rem 1.25rem;
+    border-radius: 14px;
+    border: 2px solid #EBEBEB;
+    background: #fff;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    color: var(--text-main);
   }
-
-  .quiz-option:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--sky-500);
+  .quiz-option:hover { border-color: var(--yellow); background: rgba(244,180,0,0.05); }
+  .quiz-option.correct { background: rgba(16,185,129,0.08); border-color: #10b981; color: #059669; }
+  .quiz-option.wrong { background: rgba(255,59,48,0.08); border-color: var(--red-accent); color: var(--red-accent); }
+  code[class*="language-"], pre[class*="language-"] { background: var(--charcoal) !important; text-shadow: none !important; }
+  .nav-link {
+    position: relative;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+    font-size: 0.9rem;
   }
-
-  .quiz-option.correct {
-      background: rgba(16, 185, 129, 0.1);
-      border-color: var(--emerald-500);
-      color: var(--emerald-400);
+  .nav-link:hover { color: var(--charcoal); }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0;
+    width: 0; height: 2px;
+    background: var(--yellow);
+    border-radius: 2px;
+    transition: width 0.2s ease;
   }
-
-  .quiz-option.wrong {
-      background: rgba(239, 68, 68, 0.1);
-      border-color: var(--red-500);
-      color: var(--red-400);
+  .nav-link:hover::after { width: 100%; }
+  .nav-cta {
+    padding: 8px 20px;
+    background: var(--charcoal);
+    color: white;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
   }
+  .nav-cta:hover { background: var(--yellow); color: var(--charcoal); }
 }
 
 @layer utilities {
-  /* Animation classes */
   @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-
-  .animate-up {
-      animation: fadeInUp 0.8s ease forwards;
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
   }
+  .animate-up { animation: fadeInUp 0.7s ease forwards; }
+  .animate-float { animation: float 4s ease-in-out infinite; }
 }

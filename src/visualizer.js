@@ -15,12 +15,12 @@ export class DBSCANVisualizer {
         this.abortController = null;
         
         this.colors = {
-            unvisited: '#94a3b8',
+            unvisited: '#C8C8C8',
             core: '#10b981',
-            border: '#f59e0b',
-            noise: '#f87171',
-            visited: '#38bdf8',
-            clusterBase: ['#38bdf8', '#818cf8', '#c084fc', '#fb7185', '#fb923c', '#4ade80']
+            border: '#F4B400',
+            noise: '#FF3B30',
+            visited: '#F4B400',
+            clusterBase: ['#F4B400', '#10b981', '#6366f1', '#ec4899', '#14b8a6', '#f97316']
         };
 
         this.init();

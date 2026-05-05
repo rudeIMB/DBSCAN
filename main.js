@@ -108,7 +108,7 @@ function initHeroBg() {
 
     function animate() {
         ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = '#38bdf8';
+        ctx.fillStyle = '#F4B400';
         
         points.forEach(p => {
             p.x += p.vx;
@@ -124,7 +124,7 @@ function initHeroBg() {
             points.forEach(p2 => {
                 const d = Math.sqrt((p.x - p2.x)**2 + (p.y - p2.y)**2);
                 if (d < 150) {
-                    ctx.strokeStyle = `rgba(56, 189, 248, ${1 - d/150})`;
+                    ctx.strokeStyle = `rgba(244, 180, 0, ${1 - d/150})`;
                     ctx.lineWidth = 0.5;
                     ctx.beginPath();
                     ctx.moveTo(p.x, p.y);
@@ -142,15 +142,15 @@ function initQuiz() {
     const container = document.getElementById('quiz-container');
     quizData.forEach((q, i) => {
         const qDiv = document.createElement('div');
-        qDiv.className = 'p-8 rounded-3xl bg-white/5 border border-white/10';
+        qDiv.style.cssText = 'background:white;border-radius:20px;padding:28px 32px;border:2px solid #EBEBEB;';
         qDiv.innerHTML = `
-            <h3 class="text-xl font-bold text-white mb-6">${i+1}. ${q.question}</h3>
-            <div class="grid gap-3">
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:16px;">${i+1}. ${q.question}</h3>
+            <div style="display:flex;flex-direction:column;gap:10px;">
                 ${q.options.map((opt, idx) => `
                     <div class="quiz-option" data-q="${i}" data-idx="${idx}">${opt}</div>
                 `).join('')}
             </div>
-            <div class="mt-4 feedback hidden text-sm font-medium"></div>
+            <div class="feedback" style="display:none;margin-top:14px;font-size:0.875rem;font-weight:600;"></div>
         `;
         container.appendChild(qDiv);
     });
@@ -167,12 +167,12 @@ function initQuiz() {
             
             if (optIdx === question.correct) {
                 e.target.classList.add('correct');
-                feedback.textContent = 'Correct! Great job.';
-                feedback.className = 'mt-4 feedback text-emerald-400 block';
+                feedback.textContent = '✅ Correct! Great job.';
+                feedback.style.cssText = 'display:block;margin-top:14px;font-size:0.875rem;font-weight:600;color:#059669;';
             } else {
                 e.target.classList.add('wrong');
-                feedback.textContent = 'Not quite. Try again!';
-                feedback.className = 'mt-4 feedback text-red-400 block';
+                feedback.textContent = '❌ Not quite. Try again!';
+                feedback.style.cssText = 'display:block;margin-top:14px;font-size:0.875rem;font-weight:600;color:#FF3B30;';
             }
         }
     });
