@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DBSCAN Explained Simply | Ibrahim Explains</title>
-    <meta name="description" content="Learn DBSCAN clustering through interactive visualizations  made simple by Ibrahim Explains.">
+    <meta name="description" content="Learn DBSCAN clustering through interactive visualizations made simple by Ibrahim Explains.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -23,110 +23,408 @@
     <style>
       :root {
         --yellow: #F4B400;
+        --yellow-light: #FFD54F;
+        --yellow-dark: #C68A00;
         --charcoal: #1E1E1E;
+        --charcoal-soft: #2A2A2A;
         --off-white: #F5F5F5;
+        --off-white-dim: #EBEBEB;
         --red-accent: #FF3B30;
+        --text-main: #1E1E1E;
+        --text-muted: #6B6B6B;
+        --text-light: #9A9A9A;
+      }
+
+      html { scroll-behavior: smooth; }
+      body { background: var(--off-white); color: var(--text-main); font-family: 'Inter', sans-serif; margin: 0; }
+      h1,h2,h3,h4 { margin: 0; }
+      p { margin: 0; }
+
+      /* ===== COMPONENTS ===== */
+      .brand-card {
+        background: #fff;
+        border-radius: 20px;
+        border: 2px solid #EBEBEB;
+        transition: all 0.25s ease;
+      }
+      .brand-card:hover {
+        border-color: var(--yellow);
+        box-shadow: 0 8px 32px rgba(244,180,0,0.15);
+        transform: translateY(-2px);
+      }
+      .brand-btn-primary {
+        background: var(--yellow);
+        color: var(--charcoal);
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        border-radius: 50px;
+        transition: all 0.2s ease;
+        border: 2px solid var(--yellow);
+        cursor: pointer;
+      }
+      .brand-btn-primary:hover {
+        background: #E6A800;
+        box-shadow: 0 4px 20px rgba(244,180,0,0.4);
+        transform: translateY(-1px);
+      }
+      .brand-btn-outline {
+        background: transparent;
+        color: var(--charcoal);
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        border-radius: 50px;
+        border: 2px solid #D0D0D0;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+      .brand-btn-outline:hover {
+        border-color: var(--yellow);
+        color: var(--yellow-dark);
+        background: rgba(244,180,0,0.06);
+      }
+      .section-label {
+        font-family: 'Nunito', sans-serif;
+        font-weight: 800;
+        font-size: 0.75rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--yellow-dark);
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 14px;
+        background: rgba(244,180,0,0.12);
+        border: 1px solid rgba(244,180,0,0.3);
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--yellow-dark);
+        font-family: 'Nunito', sans-serif;
+      }
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        background: #E0E0E0;
+        border-radius: 3px;
+        outline: none;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        background: var(--yellow);
+        border-radius: 50%;
+        cursor: pointer;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(244,180,0,0.4);
+      }
+      pre { scrollbar-width: thin; scrollbar-color: #D0D0D0 transparent; }
+      .quiz-option {
+        cursor: pointer;
+        padding: 1rem 1.25rem;
+        border-radius: 14px;
+        border: 2px solid #EBEBEB;
+        background: #fff;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        color: var(--text-main);
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        text-align: left;
+      }
+      .quiz-option:hover { border-color: var(--yellow); background: rgba(244,180,0,0.05); }
+      .quiz-option.correct { background: rgba(16,185,129,0.08); border-color: #10b981; color: #059669; }
+      .quiz-option.wrong { background: rgba(255,59,48,0.08); border-color: var(--red-accent); color: var(--red-accent); }
+      code[class*="language-"], pre[class*="language-"] { background: var(--charcoal) !important; text-shadow: none !important; }
+      .nav-link {
+        position: relative;
+        font-weight: 600;
+        color: var(--text-muted);
+        transition: color 0.2s ease;
+        font-size: 0.9rem;
+        text-decoration: none;
+      }
+      .nav-link:hover { color: var(--charcoal); }
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -3px; left: 0;
+        width: 0; height: 2px;
+        background: var(--yellow);
+        border-radius: 2px;
+        transition: width 0.2s ease;
+      }
+      .nav-link:hover::after { width: 100%; }
+      .nav-cta {
+        padding: 8px 20px;
+        background: var(--charcoal);
+        color: white;
+        border-radius: 50px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+        text-decoration: none;
+      }
+      .nav-cta:hover { background: var(--yellow); color: var(--charcoal); }
+
+      /* ===== ANIMATIONS ===== */
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      .animate-up { animation: fadeInUp 0.7s ease forwards; }
+      .animate-float { animation: float 4s ease-in-out infinite; }
+
+      /* ===== MOBILE HAMBURGER ===== */
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        color: #1E1E1E;
+        border-radius: 8px;
+        align-items: center;
+        justify-content: center;
+      }
+      .mobile-menu-btn:hover { background: rgba(0,0,0,0.06); }
+      .nav-links-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+      }
+
+      /* ===== MOBILE DRAWER ===== */
+      .mobile-nav-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 49;
+        background: rgba(30,30,30,0.5);
+        backdrop-filter: blur(4px);
+      }
+      .mobile-nav-overlay.open { display: block; }
+      .mobile-nav-drawer {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: min(300px, 85vw);
+        height: 100%;
+        background: #fff;
+        z-index: 60;
+        padding: 80px 28px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        transition: right 0.32s cubic-bezier(0.4,0,0.2,1);
+        box-shadow: -8px 0 40px rgba(0,0,0,0.15);
+      }
+      .mobile-nav-drawer.open { right: 0; }
+      .mobile-nav-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        color: #1E1E1E;
+        border-radius: 8px;
+        line-height: 1;
+      }
+      .mobile-nav-link {
+        display: block;
+        padding: 12px 16px;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        color: #1E1E1E;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: background 0.2s, color 0.2s;
+      }
+      .mobile-nav-link:hover { background: rgba(244,180,0,0.1); color: var(--yellow-dark); }
+      .mobile-nav-cta {
+        display: block;
+        margin-top: 12px;
+        padding: 14px 24px;
+        background: #1E1E1E;
+        color: white;
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border-radius: 50px;
+        text-decoration: none;
+        transition: background 0.2s;
+      }
+      .mobile-nav-cta:hover { background: var(--yellow); color: #1E1E1E; }
+
+      /* ===== CANVAS ===== */
+      #viz-canvas { display: block; }
+      .viz-canvas-wrap { position: relative; width: 100%; aspect-ratio: 4/3; }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 900px) {
+        .mobile-menu-btn { display: flex !important; }
+        .nav-links-wrapper { display: none !important; }
+
+        .hero-grid {
+          grid-template-columns: 1fr !important;
+          gap: 40px !important;
+          text-align: center;
+        }
+        .hero-mascot { order: 2; }
+        .hero-text { order: 1; }
+        .hero-btns { justify-content: center !important; }
+        .hero-stats { justify-content: center !important; }
+        .hero-mascot img { width: 200px !important; height: 200px !important; }
+        .float-badge-1 { left: 0 !important; top: -10px !important; }
+        .float-badge-2 { right: 0 !important; bottom: -10px !important; }
+
+        .algo-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+        .viz-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+        .tuning-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+        .results-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
+        .usecases-grid { grid-template-columns: repeat(2,1fr) !important; gap: 14px !important; }
+        .code-tips-grid { grid-template-columns: 1fr !important; gap: 14px !important; }
+        .footer-inner { flex-direction: column !important; align-items: flex-start !important; }
+        /* Stack controls horizontally on mobile */
+        .viz-controls-col { flex-direction: row !important; flex-wrap: wrap !important; }
+        .viz-controls-col > .brand-card { flex: 1 1 200px !important; min-width: 0 !important; }
+      }
+
+      @media (max-width: 520px) {
+        .usecases-grid { grid-template-columns: 1fr !important; }
+        .section-pad { padding-top: 64px !important; padding-bottom: 64px !important; }
+        .viz-canvas-wrap { aspect-ratio: 1/1 !important; }
+        .hero-grid { padding: 24px 0 !important; }
       }
     </style>
 </head>
-<body style="background:#F5F5F5; color:#1E1E1E; font-family:'Inter',sans-serif;">
+<body>
+
+  <!-- MOBILE NAV OVERLAY + DRAWER -->
+  <div class="mobile-nav-overlay" id="mobile-overlay"></div>
+  <div class="mobile-nav-drawer" id="mobile-drawer">
+    <button class="mobile-nav-close" id="mobile-close" aria-label="Close menu">
+      <i data-lucide="x" style="width:24px;height:24px;"></i>
+    </button>
+    <a href="#algorithm" class="mobile-nav-link">Algorithm</a>
+    <a href="#visualizer" class="mobile-nav-link">Visualizer</a>
+    <a href="#tuning" class="mobile-nav-link">Tuning</a>
+    <a href="#results" class="mobile-nav-link">Results</a>
+    <a href="#use-cases" class="mobile-nav-link">Cases</a>
+    <a href="#sklearn" class="mobile-nav-link">Code</a>
+    <a href="#exercises" class="mobile-nav-cta">Try Quiz</a>
+  </div>
 
   <!-- NAV -->
-  <nav style="position:fixed;top:0;width:100%;z-index:50;background:rgba(245,245,245,0.92);backdrop-filter:blur(12px);border-bottom:2px solid #EBEBEB;">
-    <div style="max-width:1200px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;justify-content:space-between;">
-      <!-- Logo -->
+  <nav style="position:fixed;top:0;width:100%;z-index:50;background:rgba(245,245,245,0.92);backdrop-filter:blur(12px);border-bottom:2px solid #EBEBEB;box-sizing:border-box;">
+    <div style="max-width:1200px;margin:0 auto;padding:0 20px;height:68px;display:flex;align-items:center;justify-content:space-between;">
       <a href="#" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
         <img src="./logo.png" alt="Ibrahim Explains" style="height:44px;width:44px;border-radius:50%;object-fit:cover;border:2px solid var(--yellow);">
         <div>
           <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1rem;color:#1E1E1E;line-height:1.1;">Ibrahim<span style="color:var(--yellow);">Explains</span></div>
-          <div style="font-size:0.65rem;font-weight:600;color:#9A9A9A;letter-spacing:0.05em;">DBSCAN · Interactive</div>
+          <div style="font-size:0.65rem;font-weight:600;color:#9A9A9A;letter-spacing:0.05em;">DBSCAN &middot; Interactive</div>
         </div>
       </a>
-
-      <!-- Links -->
-      <div style="display:flex;align-items:center;gap:28px;">
-        <a href="#algorithm" class="nav-link" style="text-decoration:none;">Algorithm</a>
-        <a href="#visualizer" class="nav-link" style="text-decoration:none;">Visualizer</a>
-        <a href="#tuning" class="nav-link" style="text-decoration:none;">Tuning</a>
-        <a href="#results" class="nav-link" style="text-decoration:none;">Results</a>
-        <a href="#use-cases" class="nav-link" style="text-decoration:none;">Cases</a>
-        <a href="#sklearn" class="nav-link" style="text-decoration:none;">Code</a>
-        <a href="#exercises" class="nav-cta" style="text-decoration:none;">Try Quiz</a>
+      <div class="nav-links-wrapper">
+        <a href="#algorithm" class="nav-link">Algorithm</a>
+        <a href="#visualizer" class="nav-link">Visualizer</a>
+        <a href="#tuning" class="nav-link">Tuning</a>
+        <a href="#results" class="nav-link">Results</a>
+        <a href="#use-cases" class="nav-link">Cases</a>
+        <a href="#sklearn" class="nav-link">Code</a>
+        <a href="#exercises" class="nav-cta">Try Quiz</a>
       </div>
+      <button class="mobile-menu-btn" id="mobile-open" aria-label="Open menu">
+        <i data-lucide="menu" style="width:26px;height:26px;"></i>
+      </button>
     </div>
   </nav>
 
   <main>
     <!-- HERO -->
     <section style="position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;padding-top:68px;">
-      <!-- BG Canvas -->
       <div style="position:absolute;inset:0;z-index:0;pointer-events:none;">
         <canvas id="hero-bg" style="width:100%;height:100%;opacity:0.07;"></canvas>
       </div>
-
-      <!-- Decorative blobs -->
       <div style="position:absolute;top:15%;right:8%;width:280px;height:280px;background:radial-gradient(circle,rgba(244,180,0,0.18),transparent 70%);border-radius:50%;z-index:0;pointer-events:none;"></div>
       <div style="position:absolute;bottom:20%;left:5%;width:200px;height:200px;background:radial-gradient(circle,rgba(244,180,0,0.1),transparent 70%);border-radius:50%;z-index:0;pointer-events:none;"></div>
 
-      <div style="position:relative;z-index:10;max-width:1100px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
-        <!-- Left text -->
-        <div>
-          <div class="tag" style="margin-bottom:20px;">Clustering Explained Simply</div>
-          <h1 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(2.4rem,5vw,3.6rem);line-height:1.1;color:#1E1E1E;margin-bottom:20px;">
-            Clustering<br>by
-            <span style="position:relative;display:inline-block;">
-              <span style="color:var(--yellow);">Density</span>
-              <svg style="position:absolute;bottom:-6px;left:0;width:100%;" viewBox="0 0 200 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 6C50 2 150 2 198 6" stroke="#F4B400" stroke-width="3" stroke-linecap="round"/></svg>
-            </span>
-          </h1>
-          <p style="font-size:1.1rem;color:#6B6B6B;margin-bottom:32px;line-height:1.7;max-width:460px;">
-            Master DBSCAN  the algorithm that finds clusters of <em>any shape</em> and spots outliers automatically. No PhD required.
-          </p>
-          <div style="display:flex;gap:14px;flex-wrap:wrap;">
-            <a href="#visualizer" class="brand-btn-primary" style="padding:14px 28px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:0.95rem;">
-              Start Learning <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
-            </a>
-            <a href="#algorithm" class="brand-btn-outline" style="padding:14px 28px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:0.95rem;">
-              How it Works
-            </a>
+      <div style="position:relative;z-index:10;max-width:1100px;width:100%;margin:0 auto;padding:40px 20px;">
+        <div class="hero-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+          <!-- Left -->
+          <div class="hero-text">
+            <div class="tag" style="margin-bottom:20px;">
+              <i data-lucide="sparkles" style="width:13px;height:13px;"></i>
+              Clustering Explained Simply
+            </div>
+            <h1 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.1;color:#1E1E1E;margin-bottom:20px;">
+              Clustering<br>by
+              <span style="position:relative;display:inline-block;">
+                <span style="color:var(--yellow);">Density</span>
+                <svg style="position:absolute;bottom:-6px;left:0;width:100%;" viewBox="0 0 200 8" fill="none"><path d="M2 6C50 2 150 2 198 6" stroke="#F4B400" stroke-width="3" stroke-linecap="round"/></svg>
+              </span>
+            </h1>
+            <p style="font-size:1.05rem;color:#6B6B6B;margin-bottom:32px;line-height:1.7;max-width:460px;">
+              Master DBSCAN, the algorithm that finds clusters of <em>any shape</em> and spots outliers automatically. No PhD required.
+            </p>
+            <div class="hero-btns" style="display:flex;gap:14px;flex-wrap:wrap;">
+              <a href="#visualizer" class="brand-btn-primary" style="padding:14px 28px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:0.95rem;">
+                Start Learning <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+              </a>
+              <a href="#algorithm" class="brand-btn-outline" style="padding:14px 28px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:0.95rem;">
+                <i data-lucide="info" style="width:16px;height:16px;"></i> How it Works
+              </a>
+            </div>
+            <div class="hero-stats" style="display:flex;gap:32px;margin-top:40px;padding-top:32px;border-top:2px solid #EBEBEB;">
+              <div>
+                <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;color:#1E1E1E;">2</div>
+                <div style="font-size:0.8rem;color:#9A9A9A;font-weight:600;">Parameters</div>
+              </div>
+              <div>
+                <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;color:#1E1E1E;">&#8734;</div>
+                <div style="font-size:0.8rem;color:#9A9A9A;font-weight:600;">Cluster Shapes</div>
+              </div>
+              <div>
+                <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;color:var(--yellow);">Auto</div>
+                <div style="font-size:0.8rem;color:#9A9A9A;font-weight:600;">Noise Detection</div>
+              </div>
+            </div>
           </div>
 
-          <!-- Stats row -->
-          <div style="display:flex;gap:32px;margin-top:40px;padding-top:32px;border-top:2px solid #EBEBEB;">
-            <div>
-              <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;color:#1E1E1E;">2</div>
-              <div style="font-size:0.8rem;color:#9A9A9A;font-weight:600;">Parameters</div>
+          <!-- Right: Mascot -->
+          <div class="hero-mascot" style="position:relative;display:flex;justify-content:center;align-items:center;min-height:300px;">
+            <div class="animate-float" style="position:relative;">
+              <img src="./logo.png" alt="Ibrahim Explains" style="width:300px;height:300px;object-fit:contain;filter:drop-shadow(0 20px 40px rgba(244,180,0,0.25));">
             </div>
-            <div>
-              <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;color:#1E1E1E;">∞</div>
-              <div style="font-size:0.8rem;color:#9A9A9A;font-weight:600;">Cluster Shapes</div>
+            <div class="float-badge-1" style="position:absolute;top:10%;left:-20px;background:white;border-radius:16px;padding:12px 16px;border:2px solid #EBEBEB;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;white-space:nowrap;">
+              <span style="width:36px;height:36px;border-radius:10px;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;color:#10b981;flex-shrink:0;">
+                <i data-lucide="crosshair" style="width:20px;height:20px;"></i>
+              </span>
+              <div>
+                <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;color:#1E1E1E;">Core Point</div>
+                <div style="font-size:0.7rem;color:#9A9A9A;">MinPts neighbors</div>
+              </div>
             </div>
-            <div>
-              <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;color:var(--yellow);">Auto</div>
-              <div style="font-size:0.8rem;color:#9A9A9A;font-weight:600;">Noise Detection</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Mascot + floating cards -->
-        <div style="position:relative;display:flex;justify-content:center;align-items:center;">
-          <div class="animate-float" style="position:relative;">
-            <img src="./logo.png" alt="Ibrahim Explains" style="width:300px;height:300px;object-fit:contain;filter:drop-shadow(0 20px 40px rgba(244,180,0,0.25));">
-          </div>
-          <!-- Floating badge 1 -->
-          <div style="position:absolute;top:10%;left:-20px;background:white;border-radius:16px;padding:12px 16px;border:2px solid #EBEBEB;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;">
-            <span style="font-size:1.4rem;">🎯</span>
-            <div>
-              <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;color:#1E1E1E;">Core Point</div>
-              <div style="font-size:0.7rem;color:#9A9A9A;">MinPts neighbors</div>
-            </div>
-          </div>
-          <!-- Floating badge 2 -->
-          <div style="position:absolute;bottom:15%;right:-30px;background:white;border-radius:16px;padding:12px 16px;border:2px solid #EBEBEB;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;">
-            <span style="font-size:1.4rem;">🚫</span>
-            <div>
-              <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;color:#1E1E1E;">Noise Point</div>
-              <div style="font-size:0.7rem;color:#9A9A9A;">Pure outlier</div>
+            <div class="float-badge-2" style="position:absolute;bottom:15%;right:-30px;background:white;border-radius:16px;padding:12px 16px;border:2px solid #EBEBEB;box-shadow:0 8px 24px rgba(0,0,0,0.08);display:flex;align-items:center;gap:10px;white-space:nowrap;">
+              <span style="width:36px;height:36px;border-radius:10px;background:rgba(255,59,48,0.1);display:flex;align-items:center;justify-content:center;color:#FF3B30;flex-shrink:0;">
+                <i data-lucide="circle-x" style="width:20px;height:20px;"></i>
+              </span>
+              <div>
+                <div style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.8rem;color:#1E1E1E;">Noise Point</div>
+                <div style="font-size:0.7rem;color:#9A9A9A;">Pure outlier</div>
+              </div>
             </div>
           </div>
         </div>
@@ -134,48 +432,51 @@
     </section>
 
     <!-- ALGORITHM -->
-    <section id="algorithm" style="padding:96px 24px;max-width:1200px;margin:0 auto;">
+    <section id="algorithm" class="section-pad" style="padding:96px 20px;max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:56px;">
         <div class="section-label" style="margin-bottom:12px;">The Core Idea</div>
         <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;margin-bottom:16px;">What is DBSCAN?</h2>
         <p style="font-size:1rem;color:#6B6B6B;max-width:520px;margin:0 auto;line-height:1.7;">
-          Think of it like finding groups of friends at a party  if enough people are nearby, they form a group. Loners are noise.
+          Think of it like finding groups of friends at a party. If enough people are nearby, they form a group. Loners are noise.
         </p>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
-        <!-- Point types -->
+      <div class="algo-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
         <div style="display:flex;flex-direction:column;gap:16px;">
-          <!-- Core -->
           <div class="brand-card" style="padding:24px;display:flex;gap:18px;align-items:flex-start;">
-            <div style="width:48px;height:48px;border-radius:14px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">🟢</div>
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#10b981;">
+              <i data-lucide="circle-dot" style="width:26px;height:26px;"></i>
+            </div>
             <div>
               <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:6px;">Core Points</h4>
               <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.6;">At least <code style="background:#F0F0F0;padding:2px 6px;border-radius:6px;font-size:0.8rem;">MinPts</code> neighbors within <code style="background:#F0F0F0;padding:2px 6px;border-radius:6px;font-size:0.8rem;">Epsilon</code> radius. These are the heart of every cluster.</p>
             </div>
           </div>
-          <!-- Border -->
           <div class="brand-card" style="padding:24px;display:flex;gap:18px;align-items:flex-start;">
-            <div style="width:48px;height:48px;border-radius:14px;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">🟡</div>
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#F59E0B;">
+              <i data-lucide="circle" style="width:26px;height:26px;"></i>
+            </div>
             <div>
               <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:6px;">Border Points</h4>
               <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.6;">Within <code style="background:#F0F0F0;padding:2px 6px;border-radius:6px;font-size:0.8rem;">Epsilon</code> of a core point, but too few neighbors themselves to be core.</p>
             </div>
           </div>
-          <!-- Noise -->
           <div class="brand-card" style="padding:24px;display:flex;gap:18px;align-items:flex-start;">
-            <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,59,48,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">🔴</div>
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,59,48,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#FF3B30;">
+              <i data-lucide="alert-circle" style="width:26px;height:26px;"></i>
+            </div>
             <div>
               <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:6px;">Noise Points</h4>
-              <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.6;">Neither core nor border. These are the outliers  DBSCAN finds them automatically!</p>
+              <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.6;">Neither core nor border. These are the outliers. DBSCAN finds them automatically.</p>
             </div>
           </div>
         </div>
 
-        <!-- Steps -->
         <div style="background:var(--charcoal);border-radius:24px;padding:36px;color:white;">
           <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.2rem;color:white;margin-bottom:28px;display:flex;align-items:center;gap:10px;">
-            <span style="width:32px;height:32px;background:var(--yellow);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;">▶</span>
+            <span style="width:32px;height:32px;background:var(--yellow);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;">
+              <i data-lucide="play" style="width:16px;height:16px;color:#1E1E1E;"></i>
+            </span>
             How it Runs
           </h3>
           <div style="display:flex;flex-direction:column;gap:20px;">
@@ -185,7 +486,7 @@
             </div>
             <div style="display:flex;gap:16px;align-items:flex-start;">
               <div style="width:32px;height:32px;border-radius:50%;background:var(--yellow);color:#1E1E1E;font-weight:800;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Poppins',sans-serif;">2</div>
-              <p style="color:#C8C8C8;font-size:0.9rem;line-height:1.6;margin-top:6px;">If count \(\ge\) MinPts → start a cluster. Otherwise → mark as noise.</p>
+              <p style="color:#C8C8C8;font-size:0.9rem;line-height:1.6;margin-top:6px;">If count \(\ge\) MinPts, start a cluster. Otherwise, mark as noise.</p>
             </div>
             <div style="display:flex;gap:16px;align-items:flex-start;">
               <div style="width:32px;height:32px;border-radius:50%;background:var(--yellow);color:#1E1E1E;font-weight:800;font-size:0.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Poppins',sans-serif;">3</div>
@@ -196,50 +497,51 @@
               <p style="color:#C8C8C8;font-size:0.9rem;line-height:1.6;margin-top:6px;">Repeat until every single point has been visited.</p>
             </div>
           </div>
-          <div style="margin-top:28px;padding:16px;background:rgba(244,180,0,0.1);border:1px solid rgba(244,180,0,0.3);border-radius:14px;">
-            <p style="font-size:0.8rem;color:var(--yellow);font-weight:600;margin:0;">💡 Ibrahim's tip: Think of epsilon as a "friendship radius"  how far you need to be to count as someone's neighbor.</p>
+          <div style="margin-top:28px;padding:16px;background:rgba(244,180,0,0.1);border:1px solid rgba(244,180,0,0.3);border-radius:14px;display:flex;align-items:flex-start;gap:10px;">
+            <i data-lucide="lightbulb" style="width:18px;height:18px;color:var(--yellow);flex-shrink:0;margin-top:1px;"></i>
+            <p style="font-size:0.8rem;color:var(--yellow);font-weight:600;margin:0;">Ibrahim's tip: Think of epsilon as a "friendship radius" - how far you need to be to count as someone's neighbor.</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- VISUALIZER -->
-    <section id="visualizer" style="padding:96px 0;background:white;border-top:2px solid #EBEBEB;border-bottom:2px solid #EBEBEB;">
-      <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+    <section id="visualizer" class="section-pad" style="padding:96px 0;background:white;border-top:2px solid #EBEBEB;border-bottom:2px solid #EBEBEB;">
+      <div style="max-width:1200px;margin:0 auto;padding:0 20px;">
         <div style="text-align:center;margin-bottom:48px;">
           <div class="section-label" style="margin-bottom:12px;">Hands-On Learning</div>
           <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;margin-bottom:12px;">Interactive Visualizer</h2>
           <p style="color:#6B6B6B;max-width:480px;margin:0 auto;">Tweak parameters and watch DBSCAN come to life. Click the canvas to add your own points!</p>
         </div>
 
-        <div style="display:grid;grid-template-columns:280px 1fr;gap:28px;">
+        <div class="viz-grid" style="display:grid;grid-template-columns:280px 1fr;gap:28px;align-items:start;">
           <!-- Controls -->
-          <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="viz-controls-col" style="display:flex;flex-direction:column;gap:16px;">
             <div class="brand-card" style="padding:24px;">
               <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;color:#1E1E1E;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
-                <i data-lucide="sliders" style="width:16px;height:16px;color:var(--yellow);"></i> Parameters
+                <i data-lucide="sliders-horizontal" style="width:16px;height:16px;color:var(--yellow);"></i> Parameters
               </h4>
               <div style="display:flex;flex-direction:column;gap:20px;">
                 <div>
                   <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-                    <label style="font-size:0.85rem;font-weight:600;color:#1E1E1E;">Epsilon (ε)</label>
+                    <label style="font-size:0.85rem;font-weight:600;color:#1E1E1E;">Epsilon (&#949;)</label>
                     <span id="eps-val" style="font-family:monospace;font-weight:700;color:var(--yellow);background:rgba(244,180,0,0.1);padding:2px 8px;border-radius:6px;font-size:0.85rem;">30</span>
                   </div>
-                  <input type="range" id="eps-slider" min="10" max="100" value="30" style="width:100%;">
+                  <input type="range" id="eps-slider" min="10" max="100" value="30">
                 </div>
                 <div>
                   <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
                     <label style="font-size:0.85rem;font-weight:600;color:#1E1E1E;">MinPts</label>
                     <span id="minpts-val" style="font-family:monospace;font-weight:700;color:var(--yellow);background:rgba(244,180,0,0.1);padding:2px 8px;border-radius:6px;font-size:0.85rem;">4</span>
                   </div>
-                  <input type="range" id="minpts-slider" min="2" max="20" value="4" style="width:100%;">
+                  <input type="range" id="minpts-slider" min="2" max="20" value="4">
                 </div>
                 <div>
                   <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
                     <label style="font-size:0.85rem;font-weight:600;color:#1E1E1E;">Speed</label>
                     <span id="speed-val" style="font-family:monospace;font-weight:700;color:var(--yellow);background:rgba(244,180,0,0.1);padding:2px 8px;border-radius:6px;font-size:0.85rem;">1x</span>
                   </div>
-                  <input type="range" id="speed-slider" min="0.1" max="5" step="0.1" value="1" style="width:100%;">
+                  <input type="range" id="speed-slider" min="0.1" max="5" step="0.1" value="1">
                 </div>
               </div>
             </div>
@@ -247,42 +549,43 @@
             <div class="brand-card" style="padding:24px;">
               <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;color:#1E1E1E;margin-bottom:16px;">Controls</h4>
               <div style="display:flex;flex-direction:column;gap:10px;">
-                <button id="btn-run" class="brand-btn-primary" style="padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.9rem;cursor:pointer;">
+                <button id="btn-run" class="brand-btn-primary" style="padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.9rem;">
                   <i data-lucide="play" style="width:16px;height:16px;"></i> Run DBSCAN
                 </button>
-                <button id="btn-step" class="brand-btn-outline" style="padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.9rem;cursor:pointer;">
+                <button id="btn-step" class="brand-btn-outline" style="padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:0.9rem;">
                   <i data-lucide="step-forward" style="width:16px;height:16px;"></i> Next Step
                 </button>
-                <button id="btn-reset" style="padding:12px;border-radius:50px;border:2px solid rgba(255,59,48,0.3);background:rgba(255,59,48,0.05);color:#FF3B30;font-weight:700;font-family:'Poppins',sans-serif;font-size:0.9rem;cursor:pointer;transition:all 0.2s;">Reset</button>
+                <button id="btn-reset" style="padding:12px;border-radius:50px;border:2px solid rgba(255,59,48,0.3);background:rgba(255,59,48,0.05);color:#FF3B30;font-weight:700;font-family:'Poppins',sans-serif;font-size:0.9rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;">
+                  <i data-lucide="rotate-ccw" style="width:15px;height:15px;"></i> Reset
+                </button>
               </div>
-              <p style="font-size:0.72rem;color:#9A9A9A;margin-top:14px;text-align:center;line-height:1.5;">💡 Click on the canvas to add your own data points!</p>
+              <p style="font-size:0.72rem;color:#9A9A9A;margin-top:14px;text-align:center;line-height:1.5;display:flex;align-items:center;justify-content:center;gap:5px;">
+                <i data-lucide="mouse-pointer-click" style="width:13px;height:13px;"></i> Click canvas to add points!
+              </p>
             </div>
 
             <div class="brand-card" style="padding:24px;">
               <h4 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.95rem;color:#1E1E1E;margin-bottom:12px;">Dataset</h4>
               <select id="dataset-select" style="width:100%;padding:10px 14px;border-radius:12px;border:2px solid #EBEBEB;font-family:'Inter',sans-serif;font-size:0.875rem;color:#1E1E1E;background:white;outline:none;cursor:pointer;">
-                <option value="circles">🔵 Concentric Circles</option>
-                <option value="moons">🌙 Moons</option>
-                <option value="blobs">🫧 Density Blobs</option>
-                <option value="random">🎲 Random Noise</option>
+                <option value="circles">Concentric Circles</option>
+                <option value="moons">Moons</option>
+                <option value="blobs">Density Blobs</option>
+                <option value="random">Random Noise</option>
               </select>
             </div>
           </div>
 
           <!-- Canvas -->
           <div>
-            <div style="position:relative;width:100%;aspect-ratio:16/9;background:#FAFAFA;border-radius:24px;border:2px solid #EBEBEB;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+            <div class="viz-canvas-wrap" style="background:#FAFAFA;border-radius:24px;border:2px solid #EBEBEB;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
               <canvas id="viz-canvas" style="width:100%;height:100%;"></canvas>
-
-              <!-- Status overlay -->
-              <div id="viz-info" style="position:absolute;bottom:20px;left:20px;padding:14px 18px;border-radius:14px;background:rgba(255,255,255,0.95);border:2px solid #EBEBEB;font-size:0.78rem;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+              <div id="viz-info" style="position:absolute;bottom:16px;left:16px;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,0.95);border:2px solid #EBEBEB;font-size:0.78rem;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
                 <div style="display:flex;flex-direction:column;gap:4px;">
                   <div style="font-weight:600;color:#9A9A9A;">Status: <span id="status-text" style="color:var(--yellow);font-weight:700;">Ready</span></div>
                   <div style="font-weight:600;color:#9A9A9A;">Clusters: <span id="cluster-count" style="color:#1E1E1E;font-weight:700;">0</span></div>
                   <div style="font-weight:600;color:#9A9A9A;">Noise: <span id="noise-count" style="color:var(--red-accent);font-weight:700;">0</span></div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -290,29 +593,33 @@
     </section>
 
     <!-- TUNING -->
-    <section id="tuning" style="padding:96px 24px;max-width:1200px;margin:0 auto;">
+    <section id="tuning" class="section-pad" style="padding:96px 20px;max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:56px;">
         <div class="section-label" style="margin-bottom:12px;">Finding the Sweet Spot</div>
         <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;">Tuning Hyperparameters</h2>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
+      <div class="tuning-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
         <div style="display:flex;flex-direction:column;gap:20px;">
           <div class="brand-card" style="padding:32px;">
-            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:16px;">📈 The Elbow Method</h3>
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+              <i data-lucide="trending-up" style="width:20px;height:20px;color:var(--yellow);"></i> The Elbow Method
+            </h3>
             <p style="color:#6B6B6B;margin-bottom:16px;line-height:1.7;font-size:0.9rem;">
-              Choosing ε by hand is hard. Use the <strong>K-Distance Plot</strong> instead:
+              Choosing &#949; by hand is hard. Use the <strong>K-Distance Plot</strong> instead:
             </p>
             <ol style="display:flex;flex-direction:column;gap:10px;padding-left:0;list-style:none;">
               <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">1.</span>Set $k = \text{MinPts} - 1$</li>
               <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">2.</span>Calculate each point's distance to its $k$-th nearest neighbor</li>
               <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">3.</span>Sort distances and plot them</li>
-              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">4.</span>The <strong>"Elbow"</strong> of the curve = your optimal ε</li>
+              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">4.</span>The <strong>"Elbow"</strong> of the curve is your optimal &#949;</li>
             </ol>
           </div>
           <div style="background:rgba(244,180,0,0.08);border:2px solid rgba(244,180,0,0.25);border-radius:20px;padding:28px;">
-            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:12px;">👍 MinPts Rule of Thumb</h3>
+            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+              <i data-lucide="thumbs-up" style="width:18px;height:18px;color:var(--yellow);"></i> MinPts Rule of Thumb
+            </h3>
             <p style="color:#6B6B6B;line-height:1.7;font-size:0.9rem;">
-              Set <code style="background:rgba(244,180,0,0.15);padding:2px 8px;border-radius:6px;font-size:0.85rem;">MinPts ≥ D + 1</code> where $D$ = number of dimensions. For noisier data, go higher.
+              Set <code style="background:rgba(244,180,0,0.15);padding:2px 8px;border-radius:6px;font-size:0.85rem;">MinPts &#8805; D + 1</code> where $D$ = number of dimensions. For noisier data, go higher.
             </p>
           </div>
         </div>
@@ -325,19 +632,20 @@
       </div>
     </section>
 
-    <!-- CODE / SKLEARN -->
-    <section id="sklearn" style="padding:96px 0;background:var(--charcoal);border-top:2px solid #EBEBEB;">
-      <div style="max-width:860px;margin:0 auto;padding:0 24px;">
+    <!-- CODE -->
+    <section id="sklearn" class="section-pad" style="padding:96px 0;background:var(--charcoal);border-top:2px solid #EBEBEB;">
+      <div style="max-width:860px;margin:0 auto;padding:0 20px;">
         <div style="text-align:center;margin-bottom:48px;">
-          <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;background:rgba(244,180,0,0.15);border:1px solid rgba(244,180,0,0.3);border-radius:50px;font-size:0.75rem;font-weight:700;color:var(--yellow);font-family:'Nunito',sans-serif;margin-bottom:14px;letter-spacing:0.08em;">⌨️ CODE TIME</div>
+          <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 14px;background:rgba(244,180,0,0.15);border:1px solid rgba(244,180,0,0.3);border-radius:50px;font-size:0.75rem;font-weight:700;color:var(--yellow);font-family:'Nunito',sans-serif;margin-bottom:14px;letter-spacing:0.08em;">
+            <i data-lucide="terminal" style="width:14px;height:14px;"></i> CODE TIME
+          </div>
           <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.4rem);color:white;margin-bottom:12px;">Implementation Guide</h2>
           <p style="color:#9A9A9A;max-width:480px;margin:0 auto;">Two lines of sklearn. That's it. Let's go.</p>
         </div>
-
         <div style="display:flex;flex-direction:column;gap:28px;">
           <div>
             <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:white;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
-              <i data-lucide="code" style="width:18px;height:18px;color:var(--yellow);"></i> Basic Setup
+              <i data-lucide="code-2" style="width:18px;height:18px;color:var(--yellow);"></i> Basic Setup
             </h3>
             <pre style="border-radius:18px;border:2px solid rgba(255,255,255,0.08);overflow-x:auto;"><code class="language-python">from sklearn.cluster import DBSCAN
 import numpy as np
@@ -348,18 +656,22 @@ db = DBSCAN(eps=0.3, min_samples=5)
 # Fit and predict
 clusters = db.fit_predict(X)
 
-# -1 means noise  DBSCAN finds them for you
+# -1 means noise. DBSCAN finds them for you.
 n_clusters = len(set(clusters)) - (1 if -1 in clusters else 0)
 n_noise = list(clusters).count(-1)</code></pre>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="code-tips-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
             <div style="background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;">
-              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:white;margin-bottom:10px;font-size:0.9rem;">Distance Metrics</h4>
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:white;margin-bottom:10px;font-size:0.9rem;display:flex;align-items:center;gap:8px;">
+                <i data-lucide="ruler" style="width:16px;height:16px;color:var(--yellow);"></i> Distance Metrics
+              </h4>
               <p style="font-size:0.825rem;color:#9A9A9A;margin-bottom:12px;line-height:1.6;">For non-Euclidean data, swap the <code style="color:var(--yellow);">metric</code> param.</p>
               <code style="font-size:0.78rem;color:var(--yellow);background:rgba(244,180,0,0.1);padding:6px 12px;border-radius:8px;display:inline-block;">metric='manhattan'</code>
             </div>
             <div style="background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px;">
-              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:white;margin-bottom:10px;font-size:0.9rem;">Scalability</h4>
+              <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:white;margin-bottom:10px;font-size:0.9rem;display:flex;align-items:center;gap:8px;">
+                <i data-lucide="zap" style="width:16px;height:16px;color:var(--yellow);"></i> Scalability
+              </h4>
               <p style="font-size:0.825rem;color:#9A9A9A;margin-bottom:12px;line-height:1.6;">Use <code style="color:var(--yellow);">ball_tree</code> for high-dimensional datasets.</p>
               <code style="font-size:0.78rem;color:var(--yellow);background:rgba(244,180,0,0.1);padding:6px 12px;border-radius:8px;display:inline-block;">algorithm='auto'</code>
             </div>
@@ -369,55 +681,69 @@ n_noise = list(clusters).count(-1)</code></pre>
     </section>
 
     <!-- RESULTS -->
-    <section id="results" style="padding:96px 24px;max-width:1200px;margin:0 auto;">
+    <section id="results" class="section-pad" style="padding:96px 20px;max-width:1200px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:56px;">
         <div class="section-label" style="margin-bottom:12px;">Reading the Output</div>
         <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;">Interpreting Results</h2>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+      <div class="results-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
         <div class="brand-card" style="padding:32px;">
-          <div style="width:52px;height:52px;border-radius:16px;background:rgba(244,180,0,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:1.4rem;">📊</div>
+          <div style="width:52px;height:52px;border-radius:16px;background:rgba(244,180,0,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:20px;color:var(--yellow);">
+            <i data-lucide="bar-chart-2" style="width:28px;height:28px;"></i>
+          </div>
           <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:12px;">Cluster Count</h3>
-          <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.7;">Unlike K-Means, DBSCAN tells <em>you</em> how many clusters exist. Too many? Your ε is probably too small.</p>
+          <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.7;">Unlike K-Means, DBSCAN tells <em>you</em> how many clusters exist. Too many? Your &#949; is probably too small.</p>
         </div>
         <div class="brand-card" style="padding:32px;">
-          <div style="width:52px;height:52px;border-radius:16px;background:rgba(255,59,48,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:1.4rem;">⚠️</div>
+          <div style="width:52px;height:52px;border-radius:16px;background:rgba(255,59,48,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:20px;color:#FF3B30;">
+            <i data-lucide="triangle-alert" style="width:28px;height:28px;"></i>
+          </div>
           <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:12px;">Noise Ratio</h3>
           <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.7;">High noise (label = -1) means poor tuning or data that simply lacks clear density structure.</p>
         </div>
         <div class="brand-card" style="padding:32px;">
-          <div style="width:52px;height:52px;border-radius:16px;background:rgba(16,185,129,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:1.4rem;">✅</div>
+          <div style="width:52px;height:52px;border-radius:16px;background:rgba(16,185,129,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:20px;color:#10b981;">
+            <i data-lucide="check-circle" style="width:28px;height:28px;"></i>
+          </div>
           <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1rem;color:#1E1E1E;margin-bottom:12px;">Silhouette Score</h3>
-          <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.7;">Validate cluster quality with silhouette analysis. Higher = clusters are well-separated and tight.</p>
+          <p style="font-size:0.875rem;color:#6B6B6B;line-height:1.7;">Validate cluster quality with silhouette analysis. Higher means clusters are well-separated and tight.</p>
         </div>
       </div>
     </section>
 
     <!-- USE CASES -->
-    <section id="use-cases" style="padding:96px 0;background:white;border-top:2px solid #EBEBEB;border-bottom:2px solid #EBEBEB;">
-      <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+    <section id="use-cases" class="section-pad" style="padding:96px 0;background:white;border-top:2px solid #EBEBEB;border-bottom:2px solid #EBEBEB;">
+      <div style="max-width:1200px;margin:0 auto;padding:0 20px;">
         <div style="text-align:center;margin-bottom:56px;">
           <div class="section-label" style="margin-bottom:12px;">Real World</div>
           <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;">Where DBSCAN Shines</h2>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        <div class="usecases-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
           <div class="brand-card" style="padding:24px;">
-            <div style="font-size:2rem;margin-bottom:14px;">📍</div>
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(244,180,0,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:14px;color:var(--yellow);">
+              <i data-lucide="map-pin" style="width:24px;height:24px;"></i>
+            </div>
             <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:8px;font-size:0.95rem;">Geospatial</h4>
             <p style="font-size:0.8rem;color:#6B6B6B;line-height:1.6;">Group GPS pings to find transit hubs or traffic congestion zones.</p>
           </div>
           <div class="brand-card" style="padding:24px;">
-            <div style="font-size:2rem;margin-bottom:14px;">🛡️</div>
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:14px;color:#3b82f6;">
+              <i data-lucide="shield-alert" style="width:24px;height:24px;"></i>
+            </div>
             <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:8px;font-size:0.95rem;">Fraud Detection</h4>
-            <p style="font-size:0.8rem;color:#6B6B6B;line-height:1.6;">Anomalous transactions fall into noise regions  DBSCAN catches them.</p>
+            <p style="font-size:0.8rem;color:#6B6B6B;line-height:1.6;">Anomalous transactions fall into noise regions. DBSCAN catches them.</p>
           </div>
           <div class="brand-card" style="padding:24px;">
-            <div style="font-size:2rem;margin-bottom:14px;">🛒</div>
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:14px;color:#10b981;">
+              <i data-lucide="shopping-cart" style="width:24px;height:24px;"></i>
+            </div>
             <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:8px;font-size:0.95rem;">Market Segments</h4>
             <p style="font-size:0.8rem;color:#6B6B6B;line-height:1.6;">Cluster customers by behavior without pre-defining how many groups.</p>
           </div>
           <div class="brand-card" style="padding:24px;">
-            <div style="font-size:2rem;margin-bottom:14px;">🖼️</div>
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:14px;color:#8b5cf6;">
+              <i data-lucide="scan-eye" style="width:24px;height:24px;"></i>
+            </div>
             <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:8px;font-size:0.95rem;">Computer Vision</h4>
             <p style="font-size:0.8rem;color:#6B6B6B;line-height:1.6;">Segment images by grouping pixels with similar color or intensity.</p>
           </div>
@@ -426,19 +752,22 @@ n_noise = list(clusters).count(-1)</code></pre>
     </section>
 
     <!-- QUIZ -->
-    <section id="exercises" style="padding:96px 24px;max-width:800px;margin:0 auto;">
+    <section id="exercises" class="section-pad" style="padding:96px 20px;max-width:800px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:48px;">
         <div class="section-label" style="margin-bottom:12px;">Knowledge Check</div>
-        <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;margin-bottom:12px;">Test Yourself 🧠</h2>
-        <p style="color:#6B6B6B;">Quick questions  let's see how much you've learned!</p>
+        <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:12px;">
+          Test Yourself
+          <i data-lucide="brain" style="width:32px;height:32px;color:var(--yellow);"></i>
+        </h2>
+        <p style="color:#6B6B6B;">Quick questions to see how much you have learned!</p>
       </div>
       <div id="quiz-container" style="display:flex;flex-direction:column;gap:24px;"></div>
     </section>
   </main>
 
   <!-- FOOTER -->
-  <footer style="padding:40px 24px;background:var(--charcoal);border-top:2px solid rgba(255,255,255,0.06);">
-    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+  <footer style="padding:40px 20px;background:var(--charcoal);border-top:2px solid rgba(255,255,255,0.06);">
+    <div class="footer-inner" style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
       <div style="display:flex;align-items:center;gap:12px;">
         <img src="./logo.png" alt="Ibrahim Explains" style="height:40px;width:40px;border-radius:50%;object-fit:cover;border:2px solid var(--yellow);">
         <div>
@@ -446,14 +775,36 @@ n_noise = list(clusters).count(-1)</code></pre>
           <div style="font-size:0.72rem;color:#6B6B6B;">Making complex tech simple.</div>
         </div>
       </div>
-      <p style="color:#6B6B6B;font-size:0.85rem;">© 2026 Ibrahim Explains · Built for curious minds</p>
+      <p style="color:#6B6B6B;font-size:0.85rem;">&#169; 2026 Ibrahim Explains &middot; Built for curious minds</p>
       <div style="display:flex;align-items:center;gap:12px;">
-        <a href="https://youtube.com" style="display:flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(255,59,48,0.15);border:1px solid rgba(255,59,48,0.3);border-radius:50px;text-decoration:none;color:#FF3B30;font-weight:700;font-size:0.8rem;font-family:'Poppins',sans-serif;">
-          ▶ YouTube
+        <a href="https://www.youtube.com/@ibrahimexplainshow" style="display:flex;align-items:center;gap:8px;padding:8px 18px;background:rgba(255,59,48,0.15);border:1px solid rgba(255,59,48,0.3);border-radius:50px;text-decoration:none;color:#FF3B30;font-weight:700;font-size:0.8rem;font-family:'Poppins',sans-serif;">
+          <i data-lucide="youtube" style="width:16px;height:16px;"></i> YouTube
         </a>
       </div>
     </div>
   </footer>
+
+  <!-- Mobile nav script (inline, runs before module) -->
+  <script>
+    const openBtn = document.getElementById('mobile-open');
+    const closeBtn = document.getElementById('mobile-close');
+    const drawer = document.getElementById('mobile-drawer');
+    const overlay = document.getElementById('mobile-overlay');
+    function openNav() {
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeNav() {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    openBtn.addEventListener('click', openNav);
+    closeBtn.addEventListener('click', closeNav);
+    overlay.addEventListener('click', closeNav);
+    drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
+  </script>
 
   <script type="module" src="/main.js"></script>
 </body>

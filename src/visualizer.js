@@ -4,6 +4,7 @@ export class DBSCANVisualizer {
         this.ctx = this.canvas.getContext('2d');
         this.points = [];
         this.eps = 30;
+        this._epsNorm = null; // normalized eps (fraction of canvas diagonal)
         this.minPts = 4;
         this.clusters = [];
         this.visited = new Set();
@@ -29,14 +30,22 @@ export class DBSCANVisualizer {
     init() {
         this.resize();
         window.addEventListener('resize', () => this.resize());
-        this.canvas.addEventListener('mousedown', (e) => this.handleCanvasClick(e));
+        this.canvas.addEventListener('mousedown', (e) => this.handleCanvasInput(e.clientX, e.clientY));
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const t = e.touches[0];
+            this.handleCanvasInput(t.clientX, t.clientY);
+        }, { passive: false });
     }
 
-    handleCanvasClick(e) {
+    handleCanvasInput(clientX, clientY) {
         if (this.isRunning) return;
         const rect = this.canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        // Scale from CSS pixels to canvas pixels
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+        const x = (clientX - rect.left) * scaleX;
+        const y = (clientY - rect.top) * scaleY;
         this.points.push({
             x, y,
             type: 'unvisited',
@@ -48,16 +57,44 @@ export class DBSCANVisualizer {
 
     resize() {
         const rect = this.canvas.parentElement.getBoundingClientRect();
-        this.canvas.width = rect.width;
-        this.canvas.height = rect.height;
+        const newW = Math.max(rect.width, 1);
+        const newH = Math.max(rect.height, 1);
+        const oldW = this.canvas.width || newW;
+        const oldH = this.canvas.height || newH;
+
+        // Scale existing (user-placed or pre-set) points proportionally
+        if (this.canvas.width > 0 && this.canvas.height > 0 && this.points.length > 0) {
+            const scaleX = newW / oldW;
+            const scaleY = newH / oldH;
+            this.points.forEach(p => {
+                p.x *= scaleX;
+                p.y *= scaleY;
+            });
+        }
+
+        // Keep eps as a stable fraction of canvas width so it scales correctly
+        if (this.canvas.width > 0) {
+            // Persist the normalized eps before changing canvas size
+            this._epsNorm = this.eps / oldW;
+        } else {
+            // First call — set a sensible default (5% of width)
+            this._epsNorm = this.eps / newW;
+        }
+        this.eps = Math.round(this._epsNorm * newW);
+
+        this.canvas.width = newW;
+        this.canvas.height = newH;
         this.draw();
     }
 
     setPoints(points) {
+        // Accept either raw {x,y} (already in canvas coords) or normalized {nx,ny} (0-1)
+        const w = this.canvas.width;
+        const h = this.canvas.height;
         this.points = points.map(p => ({
-            x: p.x,
-            y: p.y,
-            type: 'unvisited', // unvisited, core, border, noise
+            x: p.nx !== undefined ? p.nx * w : p.x,
+            y: p.ny !== undefined ? p.ny * h : p.y,
+            type: 'unvisited',
             clusterId: -1,
             isVisiting: false
         }));

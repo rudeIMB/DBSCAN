@@ -16,7 +16,7 @@ if (typeof Prism !== 'undefined') {
 }
 
 const viz = new DBSCANVisualizer('viz-canvas');
-const datasets = generateDatasets(viz.canvas.width, viz.canvas.height);
+const datasets = generateDatasets(); // normalized coords, independent of canvas size
 
 // Initial Dataset
 viz.setPoints(datasets.circles);
@@ -36,6 +36,7 @@ const datasetSelect = document.getElementById('dataset-select');
 // Controls
 epsSlider.addEventListener('input', (e) => {
     viz.eps = parseInt(e.target.value);
+    viz._epsNorm = viz.eps / viz.canvas.width;
     epsVal.textContent = viz.eps;
     viz.reset();
     updateKPlot();
@@ -167,11 +168,11 @@ function initQuiz() {
             
             if (optIdx === question.correct) {
                 e.target.classList.add('correct');
-                feedback.textContent = '✅ Correct! Great job.';
+                feedback.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px;"><polyline points="20 6 9 17 4 12"/></svg>Correct! Great job.';
                 feedback.style.cssText = 'display:block;margin-top:14px;font-size:0.875rem;font-weight:600;color:#059669;';
             } else {
                 e.target.classList.add('wrong');
-                feedback.textContent = '❌ Not quite. Try again!';
+                feedback.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Not quite. Try again!';
                 feedback.style.cssText = 'display:block;margin-top:14px;font-size:0.875rem;font-weight:600;color:#FF3B30;';
             }
         }

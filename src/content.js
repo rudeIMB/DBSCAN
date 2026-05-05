@@ -31,80 +31,79 @@ export const quizData = [
     }
 ];
 
-export function generateDatasets(width, height) {
+// All generators return normalized coords (nx, ny) in 0..1 range.
+// DBSCANVisualizer.setPoints() maps them to actual canvas pixels at render time,
+// so datasets stay correct on every screen size and after resize.
+
+export function generateDatasets() {
     return {
-        circles: generateCircles(width, height),
-        moons: generateMoons(width, height),
-        blobs: generateBlobs(width, height),
-        random: generateRandom(width, height)
+        circles: generateCircles(),
+        moons:   generateMoons(),
+        blobs:   generateBlobs(),
+        random:  generateRandom()
     };
 }
 
-function generateCircles(width, height) {
-    const points = [];
-    const center = { x: width / 2, y: height / 2 };
-    // Inner circle
+function generateCircles() {
+    const pts = [];
+    // Inner ring — radius ~12% of canvas short-side
     for (let i = 0; i < 50; i++) {
-        const r = 50 + Math.random() * 20;
+        const r = 0.12 + Math.random() * 0.04;
         const a = Math.random() * Math.PI * 2;
-        points.push({ x: center.x + Math.cos(a) * r, y: center.y + Math.sin(a) * r });
+        pts.push({ nx: 0.5 + Math.cos(a) * r, ny: 0.5 + Math.sin(a) * r });
     }
-    // Outer circle
+    // Outer ring — radius ~35%
     for (let i = 0; i < 100; i++) {
-        const r = 150 + Math.random() * 30;
+        const r = 0.33 + Math.random() * 0.06;
         const a = Math.random() * Math.PI * 2;
-        points.push({ x: center.x + Math.cos(a) * r, y: center.y + Math.sin(a) * r });
+        pts.push({ nx: 0.5 + Math.cos(a) * r, ny: 0.5 + Math.sin(a) * r });
     }
-    return points;
+    return pts;
 }
 
-function generateMoons(width, height) {
-    const points = [];
-    const centerX = width / 2;
-    const centerY = height / 2;
-    // Top moon
+function generateMoons() {
+    const pts = [];
     for (let i = 0; i < 60; i++) {
         const a = Math.random() * Math.PI;
-        const r = 100;
-        points.push({ 
-            x: centerX - 60 + Math.cos(a) * r + (Math.random() - 0.5) * 30, 
-            y: centerY + Math.sin(a) * r + (Math.random() - 0.5) * 30 
+        const r = 0.25;
+        pts.push({
+            nx: 0.35 + Math.cos(a) * r + (Math.random() - 0.5) * 0.06,
+            ny: 0.5  + Math.sin(a) * r + (Math.random() - 0.5) * 0.06
         });
     }
-    // Bottom moon
     for (let i = 0; i < 60; i++) {
         const a = Math.random() * Math.PI;
-        const r = 100;
-        points.push({ 
-            x: centerX + 60 + Math.cos(a) * r + (Math.random() - 0.5) * 30, 
-            y: centerY - Math.sin(a) * r + (Math.random() - 0.5) * 30 
+        const r = 0.25;
+        pts.push({
+            nx: 0.65 + Math.cos(a) * r + (Math.random() - 0.5) * 0.06,
+            ny: 0.5  - Math.sin(a) * r + (Math.random() - 0.5) * 0.06
         });
     }
-    return points;
+    return pts;
 }
 
-function generateBlobs(width, height) {
-    const points = [];
+function generateBlobs() {
+    const pts = [];
     const centers = [
-        { x: width * 0.25, y: height * 0.25 },
-        { x: width * 0.75, y: height * 0.75 },
-        { x: width * 0.75, y: height * 0.25 }
+        { cx: 0.25, cy: 0.25 },
+        { cx: 0.75, cy: 0.75 },
+        { cx: 0.75, cy: 0.25 }
     ];
-    centers.forEach(c => {
+    centers.forEach(({ cx, cy }) => {
         for (let i = 0; i < 40; i++) {
-            points.push({ 
-                x: c.x + (Math.random() - 0.5) * 100, 
-                y: c.y + (Math.random() - 0.5) * 100 
+            pts.push({
+                nx: cx + (Math.random() - 0.5) * 0.22,
+                ny: cy + (Math.random() - 0.5) * 0.22
             });
         }
     });
-    return points;
+    return pts;
 }
 
-function generateRandom(width, height) {
-    const points = [];
+function generateRandom() {
+    const pts = [];
     for (let i = 0; i < 150; i++) {
-        points.push({ x: Math.random() * width, y: Math.random() * height });
+        pts.push({ nx: Math.random(), ny: Math.random() });
     }
-    return points;
+    return pts;
 }
