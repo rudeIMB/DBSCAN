@@ -66,7 +66,7 @@ document.getElementById('btn-reset').addEventListener('click', () => viz.reset()
 // K-Distance Plot
 function updateKPlot() {
     const distances = viz.getKDistances(viz.minPts);
-    drawKDistancePlot('k-distance-chart', distances);
+    drawKDistancePlot('k-distance-container', distances);
 }
 updateKPlot();
 

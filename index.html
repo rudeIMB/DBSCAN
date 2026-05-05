@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 
     <style>
       :root {
@@ -598,37 +599,60 @@
         <div class="section-label" style="margin-bottom:12px;">Finding the Sweet Spot</div>
         <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:clamp(1.8rem,4vw,2.8rem);color:#1E1E1E;">Tuning Hyperparameters</h2>
       </div>
-      <div class="tuning-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;">
-        <div style="display:flex;flex-direction:column;gap:20px;">
-          <div class="brand-card" style="padding:32px;">
-            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
-              <i data-lucide="trending-up" style="width:20px;height:20px;color:var(--yellow);"></i> The Elbow Method
-            </h3>
-            <p style="color:#6B6B6B;margin-bottom:16px;line-height:1.7;font-size:0.9rem;">
-              Choosing &#949; by hand is hard. Use the <strong>K-Distance Plot</strong> instead:
-            </p>
-            <ol style="display:flex;flex-direction:column;gap:10px;padding-left:0;list-style:none;">
-              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">1.</span>Set $k = \text{MinPts} - 1$</li>
-              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">2.</span>Calculate each point's distance to its $k$-th nearest neighbor</li>
-              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">3.</span>Sort distances and plot them</li>
-              <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">4.</span>The <strong>"Elbow"</strong> of the curve is your optimal &#949;</li>
-            </ol>
-          </div>
-          <div style="background:rgba(244,180,0,0.08);border:2px solid rgba(244,180,0,0.25);border-radius:20px;padding:28px;">
-            <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
-              <i data-lucide="thumbs-up" style="width:18px;height:18px;color:var(--yellow);"></i> MinPts Rule of Thumb
-            </h3>
-            <p style="color:#6B6B6B;line-height:1.7;font-size:0.9rem;">
-              Set <code style="background:rgba(244,180,0,0.15);padding:2px 8px;border-radius:6px;font-size:0.85rem;">MinPts &#8805; D + 1</code> where $D$ = number of dimensions. For noisier data, go higher.
-            </p>
-          </div>
-        </div>
+
+      <!-- Top: two cards side by side -->
+      <div class="tuning-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:36px;">
         <div class="brand-card" style="padding:32px;">
-          <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;margin-bottom:20px;text-align:center;">Live K-Distance Plot</h4>
-          <div id="k-distance-container" style="width:100%;height:280px;">
-            <canvas id="k-distance-chart" style="width:100%;height:100%;"></canvas>
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+            <i data-lucide="trending-up" style="width:20px;height:20px;color:var(--yellow);"></i> The Elbow Method
+          </h3>
+          <p style="color:#6B6B6B;margin-bottom:16px;line-height:1.7;font-size:0.9rem;">
+            Choosing &#949; by hand is hard. Use the <strong>K-Distance Plot</strong> instead:
+          </p>
+          <ol style="display:flex;flex-direction:column;gap:10px;padding-left:0;list-style:none;">
+            <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">1.</span>Set $k = \text{MinPts} - 1$</li>
+            <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">2.</span>Calculate each point's distance to its $k$-th nearest neighbor</li>
+            <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">3.</span>Sort distances and plot them</li>
+            <li style="display:flex;gap:12px;font-size:0.875rem;color:#6B6B6B;"><span style="font-family:'Poppins',sans-serif;font-weight:700;color:var(--yellow);flex-shrink:0;">4.</span>The <strong>"Elbow"</strong> of the curve is your optimal &#949;</li>
+          </ol>
+        </div>
+        <div style="background:rgba(244,180,0,0.08);border:2px solid rgba(244,180,0,0.25);border-radius:20px;padding:32px;display:flex;flex-direction:column;justify-content:center;">
+          <h3 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:1.1rem;color:#1E1E1E;margin-bottom:12px;display:flex;align-items:center;gap:10px;">
+            <i data-lucide="thumbs-up" style="width:18px;height:18px;color:var(--yellow);"></i> MinPts Rule of Thumb
+          </h3>
+          <p style="color:#6B6B6B;line-height:1.7;font-size:0.9rem;margin-bottom:20px;">
+            Set <code style="background:rgba(244,180,0,0.15);padding:2px 8px;border-radius:6px;font-size:0.85rem;">MinPts &#8805; D + 1</code> where $D$ = number of dimensions. For noisier data, go higher.
+          </p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:white;border-radius:12px;border:1px solid #EBEBEB;">
+              <span style="width:10px;height:10px;border-radius:50%;background:#10b981;flex-shrink:0;"></span>
+              <span style="font-size:0.82rem;color:#6B6B6B;"><strong style="color:#1E1E1E;">2D data</strong> → MinPts ≥ 3</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:white;border-radius:12px;border:1px solid #EBEBEB;">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--yellow);flex-shrink:0;"></span>
+              <span style="font-size:0.82rem;color:#6B6B6B;"><strong style="color:#1E1E1E;">Noisy data</strong> → MinPts ≥ 5–10</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:white;border-radius:12px;border:1px solid #EBEBEB;">
+              <span style="width:10px;height:10px;border-radius:50%;background:#6366f1;flex-shrink:0;"></span>
+              <span style="font-size:0.82rem;color:#6B6B6B;"><strong style="color:#1E1E1E;">High-dim</strong> → MinPts ≥ D + 1</span>
+            </div>
           </div>
         </div>
+      </div>
+
+      <!-- Bottom: full-width D3 chart -->
+      <div class="brand-card" style="padding:32px 36px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <div>
+            <h4 style="font-family:'Poppins',sans-serif;font-weight:700;color:#1E1E1E;font-size:1.05rem;margin-bottom:4px;">Live K-Distance Plot</h4>
+            <p style="font-size:0.8rem;color:#9A9A9A;">Updates as you change the dataset or MinPts. Look for the <span style="color:var(--yellow-dark);font-weight:700;">elbow</span> — that's your optimal ε.</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;font-size:0.78rem;color:#9A9A9A;flex-shrink:0;">
+            <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:24px;height:3px;background:#38bdf8;border-radius:2px;"></span>K-distance</span>
+            <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;border:2px dashed var(--yellow);"></span>Elbow</span>
+          </div>
+        </div>
+        <div id="k-distance-container" style="width:100%;height:320px;"></div>
       </div>
     </section>
 
