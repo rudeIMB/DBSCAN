@@ -1,3 +1,4 @@
+import './style.css';
 import { DBSCANVisualizer } from './src/visualizer.js';
 import { drawKDistancePlot } from './src/tuning.js';
 import { generateDatasets, quizData } from './src/content.js';
